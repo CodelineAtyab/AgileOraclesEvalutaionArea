@@ -80,7 +80,7 @@ public class MoveSnake {
                     int[] currentHead = snakeBody.get(0);// current head location
                     int newHeadRow = currentHead[0] - 1; // move up
                     int newHeadCol = currentHead[1];// same column
-                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn, newHeadRow, newHeadCol, headRowComparison,headColumnComparison)){
+                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn, newHeadRow, newHeadCol, headRowComparison,headColumnComparison) && notBodyCollision(newHeadRow,newHeadCol)){
                         if (snakeNotOutside(newHeadRow, newHeadCol, mapArray2D,snakeBody)) {
                             snakeBody.add(0, new int[]{newHeadRow, newHeadCol});// add new head at the front of the list
                             mapArray2D[newHeadRow][newHeadCol] = 'o'; // add new head for movement
@@ -99,7 +99,7 @@ public class MoveSnake {
                     int[] currentHead = snakeBody.get(0);
                     int newRow = currentHead[0] + 1; // move down
                     int newCol = currentHead[1];// same column
-                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn,newRow,newCol, headRowComparison,headColumnComparison)){
+                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn,newRow,newCol, headRowComparison,headColumnComparison)&& notBodyCollision(newRow,newCol)){
                         if (snakeNotOutside(newRow, newCol, mapArray2D,snakeBody)) {
                             snakeBody.add(0, new int[]{newRow, newCol});
                             mapArray2D[newRow][newCol] = 'o';
@@ -118,7 +118,7 @@ public class MoveSnake {
                     int[] currentHead = snakeBody.get(0);
                     int newRow = currentHead[0]; // same row
                     int newCol = currentHead[1] - 1;// go left
-                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn,newRow,newCol, headRowComparison,headColumnComparison)){
+                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn,newRow,newCol, headRowComparison,headColumnComparison)&& notBodyCollision(newRow,newCol)){
                         if (snakeNotOutside(newRow, newCol, mapArray2D,snakeBody)) {
                             snakeBody.add(0, new int[]{newRow, newCol});
                             mapArray2D[newRow][newCol] = 'o';
@@ -137,7 +137,7 @@ public class MoveSnake {
                     int[] currentHead = snakeBody.get(0);
                     int newRow = currentHead[0]; // same row
                     int newCol = currentHead[1] + 1;// go right
-                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn,newRow,newCol, headRowComparison,headColumnComparison)){
+                    if (invalidMovementCondition(afterHeadRow, afterHeadColumn,newRow,newCol, headRowComparison,headColumnComparison)&& notBodyCollision(newRow,newCol)){
                         if (snakeNotOutside(newRow, newCol, mapArray2D,snakeBody)) {
                             snakeBody.add(0, new int[]{newRow, newCol});
                             mapArray2D[newRow][newCol] = 'o';
@@ -255,6 +255,41 @@ public class MoveSnake {
         }
         return true;
     }
+
+    // snake head w/body collision
+    public static Boolean notBodyCollision(int newHeadRow, int newHeadCol) {
+        HashSet<String> snakeBodyCollision = new HashSet<>();
+        try {
+            List<String> coordinate = Files.readAllLines(
+                    Path.of("src/main/java/com/agileoracleseval/slitheringeval/tibyan_saad/ProjectSlithering/snakeCoordinates.txt")
+            );
+            for (String sCoordinate : coordinate) {
+                sCoordinate = sCoordinate.trim();
+
+                // Split by comma
+                String[] parts = sCoordinate.split(",");
+                int row = Integer.parseInt(parts[0]);
+                int col = Integer.parseInt(parts[1]);
+
+                // Store as "row,col"
+                snakeBodyCollision.add(row + "," + col);
+            }
+        } catch (IOException e) {
+            System.err.println("ERROR READING FILE: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        // Represent new head as string
+        String newHead = newHeadRow + "," + newHeadCol;
+
+        if (snakeBodyCollision.contains(newHead)) {
+            System.out.println("Body collision");
+            return false;
+        }
+
+        return true;
+    }
+
 
 }
 
