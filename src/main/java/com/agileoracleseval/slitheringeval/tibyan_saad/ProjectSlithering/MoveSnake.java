@@ -86,15 +86,16 @@ public class MoveSnake {
                         currentHead = snakeBody.get(0);// current head location
                         newHeadRow = currentHead[0] - 1; // move up
                         newHeadCol = currentHead[1];// same column
-                        if (snakeNotOutside(newHeadRow, newHeadCol, mapArray2D, snakeBody)) {
+                        newHeadRow = wrapRow(newHeadRow, mapArray2D);  // save value if wrapping
                             snakeBody.add(0, new int[]{newHeadRow, newHeadCol});// add new head at the front of the list
                             mapArray2D[newHeadRow][newHeadCol] = 'o'; // add new head for movement
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);// remove old tail to keep snake length constant
                             mapArray2D[oldTail[0]][oldTail[1]] = '-'; // remove old tail for movement
+
                             displayMap(mapArray2D, snakeBody);
                             writeMap(snakeBody, mapArray2D);
                             snakeTrackingFile(snakeBody);
-                        }
+
                     }
                 }
             }
@@ -111,15 +112,16 @@ public class MoveSnake {
                         currentHead = snakeBody.get(0);
                         newRow = currentHead[0] + 1; // move down
                         newCol = currentHead[1];// same column
-                        if (snakeNotOutside(newRow, newCol, mapArray2D, snakeBody)) {
+                        newRow = wrapRow(newRow, mapArray2D);
                             snakeBody.add(0, new int[]{newRow, newCol});
                             mapArray2D[newRow][newCol] = 'o';
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);
                             mapArray2D[oldTail[0]][oldTail[1]] = '-';
+
                             displayMap(mapArray2D, snakeBody);
                             writeMap(snakeBody, mapArray2D);
                             snakeTrackingFile(snakeBody);
-                        }
+
                     }
                 }
             }
@@ -136,7 +138,7 @@ public class MoveSnake {
                         currentHead = snakeBody.get(0);
                         newRow = currentHead[0]; // same row
                         newCol = currentHead[1] - 1;// go left
-                        if (snakeNotOutside(newRow, newCol, mapArray2D, snakeBody)) {
+                        newCol = wrapCol(newCol, mapArray2D);
                             snakeBody.add(0, new int[]{newRow, newCol});
                             mapArray2D[newRow][newCol] = 'o';
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);
@@ -144,7 +146,7 @@ public class MoveSnake {
                             displayMap(mapArray2D, snakeBody);
                             writeMap(snakeBody, mapArray2D);
                             snakeTrackingFile(snakeBody);
-                        }
+
                     }
                 }
             }
@@ -161,7 +163,7 @@ public class MoveSnake {
                         currentHead = snakeBody.get(0);
                         newRow = currentHead[0]; // same row
                         newCol = currentHead[1] + 1;// go right
-                        if (snakeNotOutside(newRow, newCol, mapArray2D, snakeBody)) {
+                        newCol = wrapCol(newCol, mapArray2D);
                             snakeBody.add(0, new int[]{newRow, newCol});
                             mapArray2D[newRow][newCol] = 'o';
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);
@@ -169,7 +171,7 @@ public class MoveSnake {
                             displayMap(mapArray2D, snakeBody);
                             writeMap(snakeBody, mapArray2D);
                             snakeTrackingFile(snakeBody);
-                        }
+
                     }
                 }
             } else {
@@ -178,17 +180,28 @@ public class MoveSnake {
         }
     }
 
-    //snake doesnt go out of map
-    public static boolean snakeNotOutside(int newHeadRow, int newHeadColumn, char[][] mapArray2D, ArrayList<int[]> snakeBody) {
-        int maxRow = mapArray2D.length;
-        int maxCol = mapArray2D[0].length;
+        //wrapping around row
+        public static int wrapRow(int newHeadRow, char[][] mapArray2D) {
+            int maxRow = mapArray2D.length;
 
-        if (newHeadRow >= 0 && newHeadRow < maxRow && newHeadColumn >= 0 && newHeadColumn < maxCol) {
-            return true;
-        } else {
-            return false;
+            if (newHeadRow < 0) {
+                newHeadRow = maxRow - 1; // top to bottom wrap
+            } else if (newHeadRow >= maxRow) {
+                newHeadRow = 0; // bottom to top wrap
+            }
+            return newHeadRow;
         }
-    }
+
+        public static int wrapCol(int newHeadCol, char[][] mapArray2D) {
+            int maxCol = mapArray2D[0].length;
+
+            if (newHeadCol < 0) {
+                newHeadCol = maxCol - 1; // went past left edge, wrap to right
+            } else if (newHeadCol >= maxCol) {
+                newHeadCol = 0; // went past right edge, wrap to left
+            }
+            return newHeadCol;
+        }
 
     //display map
     public static void displayMap(char[][] mapArray2D, ArrayList<int[]> snakeBody) throws InterruptedException {
@@ -205,7 +218,7 @@ public class MoveSnake {
         for (int space = 0; space < 7; space++) {
             System.out.println();
         }
-        Thread.sleep(1000);
+        Thread.sleep(500);
     }
 
     // write to map.txt
