@@ -2,7 +2,6 @@ package com.agileoracleseval.slitheringeval.tibyan_saad.ProjectSlithering;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -79,7 +78,6 @@ public class MoveSnake {
             int afterHeadColumn = bodyOne[1];
 
 
-
             // moving in the upper direction
             if (args[0].equalsIgnoreCase("up")) {
                 int[] currentHead = snakeBody.get(0);// current head location
@@ -96,12 +94,12 @@ public class MoveSnake {
                         snakeBody.add(0, new int[]{newHeadRow, newHeadCol});// add new head at the front of the list
 
 
-                        if (snakeGrow(newHeadRow, newHeadCol)){
+                        if (snakeGrow(newHeadRow, newHeadCol)) {
                             mapArray2D[newHeadRow][newHeadCol] = 'o'; // add new head for movement
                             foodRow = -1;
                             foodCol = -1;
                             foodForSnake(mapArray2D);
-                        }else{
+                        } else {
                             mapArray2D[newHeadRow][newHeadCol] = 'o'; // add new head for movement
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);// remove old tail to keep snake length constant
                             mapArray2D[oldTail[0]][oldTail[1]] = '-'; // remove old tail for movement
@@ -129,12 +127,12 @@ public class MoveSnake {
                         newRow = wrapRow(newRow, mapArray2D);
                         snakeBody.add(0, new int[]{newRow, newCol});
 
-                        if (snakeGrow(newRow, newCol )){
+                        if (snakeGrow(newRow, newCol)) {
                             mapArray2D[newRow][newCol] = 'o'; // add new head for movement
                             foodRow = -1;
                             foodCol = -1;
                             foodForSnake(mapArray2D);
-                        }else{
+                        } else {
                             mapArray2D[newRow][newCol] = 'o'; // add new head for movement
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);// remove old tail to keep snake length constant
                             mapArray2D[oldTail[0]][oldTail[1]] = '-'; // remove old tail for movement
@@ -161,12 +159,12 @@ public class MoveSnake {
                         newCol = currentHead[1] - 1;// go left
                         newCol = wrapCol(newCol, mapArray2D);
                         snakeBody.add(0, new int[]{newRow, newCol});
-                        if (snakeGrow(newRow, newCol)){
+                        if (snakeGrow(newRow, newCol)) {
                             mapArray2D[newRow][newCol] = 'o'; // add new head for movement
                             foodRow = -1;
                             foodCol = -1;
                             foodForSnake(mapArray2D);
-                        }else{
+                        } else {
                             mapArray2D[newRow][newCol] = 'o'; // add new head for movement
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);// remove old tail to keep snake length constant
                             mapArray2D[oldTail[0]][oldTail[1]] = '-'; // remove old tail for movement
@@ -193,12 +191,12 @@ public class MoveSnake {
                         newCol = currentHead[1] + 1;// go right
                         newCol = wrapCol(newCol, mapArray2D);
                         snakeBody.add(0, new int[]{newRow, newCol});
-                        if (snakeGrow(newRow, newCol)){
+                        if (snakeGrow(newRow, newCol)) {
                             mapArray2D[newRow][newCol] = 'o'; // add new head for movement
                             foodRow = -1;
                             foodCol = -1;
                             foodForSnake(mapArray2D);
-                        }else{
+                        } else {
                             mapArray2D[newRow][newCol] = 'o'; // add new head for movement
                             int[] oldTail = snakeBody.remove(snakeBody.size() - 1);// remove old tail to keep snake length constant
                             mapArray2D[oldTail[0]][oldTail[1]] = '-'; // remove old tail for movement
@@ -404,7 +402,7 @@ public class MoveSnake {
             } while (snakeBodyCheckForFood.contains(foodRow + "," + foodCol));
 
             mapArray2D[foodRow][foodCol] = food;
-        }else {
+        } else {
             // food already exists so store food coordinates
             for (int fRow = 0; fRow < mapArray2D.length; fRow++) {
                 for (int fCol = 0; fCol < mapArray2D[fRow].length; fCol++) {
@@ -418,11 +416,11 @@ public class MoveSnake {
     }
 
     // if head is at food
-    public static  Boolean snakeGrow(int newHeadRow, int newHeadCol){
-            return newHeadRow == foodRow && newHeadCol == foodCol;
-        }
-
+    public static Boolean snakeGrow(int newHeadRow, int newHeadCol) {
+        return newHeadRow == foodRow && newHeadCol == foodCol;
     }
+
+}
 
 //- - - - - - - - - - - - - - -
 //- - - - - - - - - - - - - - -
