@@ -40,6 +40,8 @@ public class MoveSnake {
             getSnake();
 
 
+
+
             boolean passed = true;
             for(int x=0;x<snakeSteps; x++) {
                 if (!moveSnake(direction)) {
@@ -61,6 +63,7 @@ public class MoveSnake {
             System.out.println("Error");
         }
     }
+
 
 
 
