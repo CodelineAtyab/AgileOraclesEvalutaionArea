@@ -89,6 +89,8 @@ public class MoveSnake {
                         newHeadRow = wrapRow(newHeadRow, mapArray2D);  // save value if wrapping
                         snakeBody.add(0, new int[]{newHeadRow, newHeadCol});// add new head at the front of the list
                         mapArray2D[newHeadRow][newHeadCol] = 'o'; // add new head for movement
+                        foodForSnake(mapArray2D);
+
                         int[] oldTail = snakeBody.remove(snakeBody.size() - 1);// remove old tail to keep snake length constant
                         mapArray2D[oldTail[0]][oldTail[1]] = '-'; // remove old tail for movement
                         displayMap(mapArray2D, snakeBody);
@@ -114,6 +116,7 @@ public class MoveSnake {
                         newRow = wrapRow(newRow, mapArray2D);
                         snakeBody.add(0, new int[]{newRow, newCol});
                         mapArray2D[newRow][newCol] = 'o';
+                        foodForSnake(mapArray2D);
                         int[] oldTail = snakeBody.remove(snakeBody.size() - 1);
                         mapArray2D[oldTail[0]][oldTail[1]] = '-';
 
@@ -140,6 +143,7 @@ public class MoveSnake {
                         newCol = wrapCol(newCol, mapArray2D);
                         snakeBody.add(0, new int[]{newRow, newCol});
                         mapArray2D[newRow][newCol] = 'o';
+                        foodForSnake(mapArray2D);
                         int[] oldTail = snakeBody.remove(snakeBody.size() - 1);
                         mapArray2D[oldTail[0]][oldTail[1]] = '-';
                         displayMap(mapArray2D, snakeBody);
@@ -165,6 +169,7 @@ public class MoveSnake {
                         newCol = wrapCol(newCol, mapArray2D);
                         snakeBody.add(0, new int[]{newRow, newCol});
                         mapArray2D[newRow][newCol] = 'o';
+                        foodForSnake(mapArray2D);
                         int[] oldTail = snakeBody.remove(snakeBody.size() - 1);
                         mapArray2D[oldTail[0]][oldTail[1]] = '-';
                         displayMap(mapArray2D, snakeBody);
@@ -348,12 +353,28 @@ public class MoveSnake {
             throw new RuntimeException(e);
         }
 
-        // so food doesnt land on snake body
-        while (snakeBodyCheckForFood.contains(foodRow + "," + foodCol)) {
-            foodRow = randomFoodLocation.nextInt(mapArray2D.length);
-            foodCol = randomFoodLocation.nextInt(mapArray2D[0].length);
+        char food = '+';
+        boolean foodExists = false;
+
+        for (char[] row : mapArray2D) { // search for food
+            for (char column : row) {
+                if (column == food) {
+                    foodExists = true;
+                }
+            }
         }
-        mapArray2D[foodRow][foodCol] = '+';// print food
+
+        // only add food to array if there is none
+        if (!foodExists) {
+            do {
+                foodRow = randomFoodLocation.nextInt(mapArray2D.length);
+                foodCol = randomFoodLocation.nextInt(mapArray2D[0].length);
+            } while (snakeBodyCheckForFood.contains(foodRow + "," + foodCol));
+
+            mapArray2D[foodRow][foodCol] = food;
+        }
+
+
     }
 
 }
