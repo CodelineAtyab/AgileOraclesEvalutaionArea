@@ -74,8 +74,6 @@ public class MoveSnake {
 
 
 
-
-
     public static void loadSnakeMap() throws IOException {
         if(!Files.exists(mapFilePath)){
             System.out.println("File Not Found");
