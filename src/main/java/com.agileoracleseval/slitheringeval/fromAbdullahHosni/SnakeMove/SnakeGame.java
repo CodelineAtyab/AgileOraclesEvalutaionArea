@@ -15,15 +15,18 @@ public class SnakeGame {
         // STEP 1 - TAKING INPUT .CMD COMMAND LINE .
         //--------------------------------------------
         try {
-            if (args.length > 0) {
+
                 for (String input : args) {
                     System.out.println(input);
-                }
+
             }
         } catch (Exception e) {
             System.out.println("Invalid Direction");
         }
-
+//        System.out.println("ARGS COUNT: " + args.length);
+//        for (String a : args) {
+//            System.out.println("ARG: " + a);
+//        }
         //--------------------------------------------
         // STEP 2 - Loading 2d Array Game board .
         //--------------------------------------------
@@ -58,13 +61,7 @@ public class SnakeGame {
             throw new RuntimeException(e);
         }
 
-        //print the board rows and columns
-        for (int row = 0; row < array2d.length; row++) {
-            for (int col = 0; col < array2d[0].length; col++) {
-                System.out.printf("%s", array2d[row][col]); //2d array is printing
-            }
-            System.out.println();
-        }
+
 
         //--------------------------------------------
         // STEP 3 - Building the snake in game.
@@ -78,7 +75,7 @@ public class SnakeGame {
             resumeGamePath = Path.of("./src/main/java/com.agileoracleseval/slitheringeval/fromAbdullahHosni/SnakeMove/snakePos.txt");
 
             if (Files.exists(resumeGamePath) && Files.size(resumeGamePath) > 0) {
-                System.out.println("LOADING PREVIUSE GAME");
+                System.out.println(" *CONTINUE GAME*");
 
                 List<String> savedGame = Files.readAllLines(resumeGamePath);
 
@@ -107,6 +104,7 @@ public class SnakeGame {
                 }
             } else {
                 // DEFAULT game (start new game , restart game)
+                System.out.println(" *NEW GAME STARTED*");
                 for (int row = 0; row < array2d.length; row++) {
                     for (int col = 0; col < array2d[0].length; col++) {
 
@@ -139,8 +137,7 @@ public class SnakeGame {
         //--------------------------------------------
         int rowDirection = 0;
         int colDirection = 0;       //declaring the direction delta {up,down, left ,right )
-        String direction = "down";
-//                args[0].toLowerCase();
+        String direction = args[0].toLowerCase();
 
         //direction delta
         if (direction.equals("up")) {
@@ -157,7 +154,7 @@ public class SnakeGame {
         }
 
 
-        int steps = 2;
+        int steps = Integer.parseInt(args[1]);
 
         for (int loop = 0; loop < steps; loop++) {
             //the move
@@ -165,6 +162,21 @@ public class SnakeGame {
             int movementRow = currentHead[0] + rowDirection;
             int movementCol = currentHead[1] + colDirection;
 
+
+            //bonus task: teleporting snake from border to border
+            // (Up/Down)
+            if (movementRow < 0) {
+                movementRow = array2d.length - 1; // Teleport to bottom
+            } else if (movementRow >= array2d.length) {
+                movementRow = 0; // Teleport to top
+            }
+
+            // (Left/Right)
+            if (movementCol < 0) {
+                movementCol = array2d[0].length - 1; // Teleport to far right
+            } else if (movementCol >= array2d[0].length) {
+                movementCol = 0; // Teleport to far left
+            }
 
             int[] newhead = new int[]{movementRow, movementCol};
             snakeBody.add(newhead);
@@ -174,12 +186,6 @@ public class SnakeGame {
             int[] oldtail = snakeBody.poll();
             array2d[oldtail[0]][oldtail[1]] = '-';
 
-
-
-
-//        array2d[oldtail[0]][oldtail[1]] = '-';
-//
-//        array2d[newhead[0]][newhead[1]] = 'o';
 
 
         }
@@ -192,6 +198,7 @@ public class SnakeGame {
             }
             System.out.println();
         }
+
 
         //--------------------------------------------
         // STEP 5 - saving game Progress in .txt .
