@@ -59,8 +59,8 @@ public class SnakeMove {
 
         //  Reading the file & Splitting
         ArrayList<String[]> rowsData = new ArrayList<>();
-        File mapFile = new File("map.txt");
-        System.out.println(new File("map").getAbsolutePath());
+        File mapFile = new File("src/main/java/com/agileoracleseval/slitheringeval/ibrahim_alrahbi/SnakeMove/map");
+        System.out.println(new File("src/main/java/com/agileoracleseval/slitheringeval/ibrahim_alrahbi/SnakeMove/map").getAbsolutePath());
 
         try {
             Scanner fileReader = new Scanner(mapFile);
@@ -127,10 +127,10 @@ public class SnakeMove {
             }
         }
 
-        //  Printing th grid map.txt
+        //  Printing the grid map.txt
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
-                System.out.print(map[row][col]);
+                System.out.print(map[row][col] + " ");
             }
             System.out.println();
         }
@@ -193,7 +193,7 @@ public class SnakeMove {
         }
 
         //  Part.4 Save map.txt to file & Print it
-        BufferedWriter fileWrite = new BufferedWriter(new FileWriter("map.txt"));
+        BufferedWriter fileWrite = new BufferedWriter(new FileWriter("src/main/java/com/agileoracleseval/slitheringeval/ibrahim_alrahbi/SnakeMove/map"));
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 fileWrite.write(map[row][col] + " ");
