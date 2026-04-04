@@ -1,9 +1,7 @@
 package com.agileoracleseval.slitheringeval.fromAbdullahHosni.SnakeMove;
 
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -155,7 +153,7 @@ public class SnakeGame {
 
 
         int steps = Integer.parseInt(args[1]);
-
+        boolean checkHitSelf = true;
         for (int loop = 0; loop < steps; loop++) {
             //the move
             int[] currentHead = snakeBody.peekLast();   //head element on queue. {0,1} == {row, col}
@@ -170,13 +168,23 @@ public class SnakeGame {
             } else if (movementRow >= array2d.length) {
                 movementRow = 0; // Teleport to top
             }
-
             // (Left/Right)
             if (movementCol < 0) {
                 movementCol = array2d[0].length - 1; // Teleport to far right
             } else if (movementCol >= array2d[0].length) {
                 movementCol = 0; // Teleport to far left
             }
+
+            //bonus: self collotion, snake is hitting it self
+            checkHitSelf = checkHitSelf(movementRow,movementCol,snakeBody);
+
+//            boolean hitSelt = false;
+//            for (int[] segment :  snakeBody) {
+//                if (segment[0] == movementRow && segment[1] == movementCol) {
+//                    hitSelt = true;
+//                    break;
+//                }
+//            }
 
             int[] newhead = new int[]{movementRow, movementCol};
             snakeBody.add(newhead);
@@ -190,13 +198,21 @@ public class SnakeGame {
 
         }
 
+        if (checkHitSelf == true){
+            System.out.println("+--------------------------------+");
+            System.out.println("+----------------------------------+");
+            System.out.println("GAME OVER: You hit\nyour own body!");
 
-        //print the board rows and columns
-        for (int row = 0; row < array2d.length; row++) {
-            for (int col = 0; col < array2d[0].length; col++) {
-                System.out.printf("%s", array2d[row][col]); //2d array is printing
+
+        }
+        else {
+            //print the board rows and columns
+            for (int row = 0; row < array2d.length; row++) {
+                for (int col = 0; col < array2d[0].length; col++) {
+                    System.out.printf("%s", array2d[row][col]); //2d array is printing
+                }
+                System.out.println();
             }
-            System.out.println();
         }
 
 
@@ -227,4 +243,16 @@ public class SnakeGame {
         }
 
     }
+
+    public static boolean checkHitSelf(int movementRow, int movementCol, Deque<int[]> snakeBody){
+        for (int[] segment : snakeBody) {
+            if (segment[0] == movementRow && segment[1] == movementCol) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
 }
