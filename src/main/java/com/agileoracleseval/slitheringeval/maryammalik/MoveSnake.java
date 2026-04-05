@@ -60,7 +60,7 @@ public class MoveSnake {
         int rows = map.length;
         int cols = map[0].length;
 
-        // find snake positions
+        //find snake
         ArrayList<int[]> snake = new ArrayList<>();
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -74,7 +74,7 @@ public class MoveSnake {
             }
         }
 
-        // move snake
+        //move snake
         for (int step = 0; step < steps; step++) {
             ArrayList<int[]> prevPositions = new ArrayList<>();
             for (int i = 0; i < snake.size(); i++) {
@@ -82,21 +82,21 @@ public class MoveSnake {
                 prevPositions.add(new int[]{posit[0], posit[1]});
             }
 
-            // calculate new head
+            //calculate new head
             int[] head = snake.get(0);
-            int newR = head[0];
-            int newC = head[1];
+            int newRow = head[0];
+            int newColm = head[1];
             if (direction.equals("up")) {
-                newR--;
+                newRow--;
             }
             else if (direction.equals("down")) {
-                newR++;
+                newRow++;
             }
             else if (direction.equals("left")) {
-                newC--;
+                newColm--;
             }
             else if (direction.equals("right")) {
-                newC++;
+                newColm++;
             }
             else {
                 List<String> openDirctss = getOpenDirections(head, map, snake);
@@ -104,38 +104,55 @@ public class MoveSnake {
                 return;
             }
 
-            // check boundaries
-            if (newR < 0 || newR >= rows || newC < 0 || newC >= cols) {
-                List<String> openDirctss = getOpenDirections(head, map, snake);
-                System.out.println("move out of map boundaries! the available open directions: " + openDirctss);
-                return;
+            //check boundaries
+            //if (newR < 0 || newR >= rows || newC < 0 || newC >= cols) {
+               //List<String> openDirctss = getOpenDirections(head, map, snake);
+                //System.out.println("move out of map boundaries! the available open directions: " + openDirctss);
+                //return;}
+
+
+            //extra-wrap-around-movement
+            //rows
+            if (newRow < 0) {
+                newRow = rows - 1;
+            }
+            else if (newRow >= rows) {
+                newRow = 0;
             }
 
-            // check self-collision
+            //columns
+            if (newColm < 0) {
+                newColm = cols - 1;
+            }
+            else if (newColm >= cols) {
+                newColm = 0;
+            }
+
+
+            //extra-check-self-collision
             boolean collision = false;
             for (int i = 1; i < snake.size(); i++) {
-                if (snake.get(i)[0] == newR && snake.get(i)[1] == newC) {
+                if (snake.get(i)[0] == newRow && snake.get(i)[1] == newColm) {
                     collision = true;
                 }
             }
-
             if (collision) {
                 List<String> openDirctss = getOpenDirections(head, map, snake);
-                System.out.println("collision! head hit the body! the available open directions: " + openDirctss);
+                System.out.println("hay collision! head hit the body! the available open directions: " + openDirctss);
                 return;
             }
 
-            // move head
-            snake.get(0)[0] = newR;
-            snake.get(0)[1] = newC;
+            //move head
+            snake.get(0)[0] = newRow;
+            snake.get(0)[1] = newColm;
 
-            // move body
+            //move body
             for (int i = 1; i < snake.size(); i++) {
                 snake.get(i)[0] = prevPositions.get(i - 1)[0];
                 snake.get(i)[1] = prevPositions.get(i - 1)[1];
             }
 
-            // clear map
+            //clear map
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
                     if (map[r][c] >= '1' && map[r][c] <= '5') {
@@ -144,17 +161,17 @@ public class MoveSnake {
                 }
             }
 
-            // snake
+            //snake
             for (int i = 0; i < snake.size(); i++) {
-                int[] pos = snake.get(i);
-                map[pos[0]][pos[1]] = (i + 1 + "").charAt(0);
+                int[] posit = snake.get(i);
+                map[posit[0]][posit[1]] = (i + 1 + "").charAt(0);
             }
         }
 
         System.out.println("Live view of the snake:");
         displayMap(map);
 
-        // save updated map
+        //save updated map
         saveMap(map);
     }
 
@@ -176,7 +193,7 @@ public class MoveSnake {
             Files.write(Path.of("map.txt"), newLines);
         }
         catch (IOException e) {
-            System.out.println("Error saving map");
+            System.out.println("error saving map");
         }
     }
 
@@ -188,27 +205,27 @@ public class MoveSnake {
         int r = head[0];
         int c = head[1];
 
-        // up
-        if (r - 1 >= 0 && !isBody(r - 1, c, snake)){
+        //up
+        if (r - 1 >= 0 && !isItBody(r - 1, c, snake)){
             openDirctss.add("up");
         }
-        // down
-        if (r + 1 < rows && !isBody(r + 1, c, snake)){
+        //down
+        if (r + 1 < rows && !isItBody(r + 1, c, snake)){
             openDirctss.add("down");
         }
-        // left
-        if (c - 1 >= 0 && !isBody(r, c - 1, snake)){
+        //left
+        if (c - 1 >= 0 && !isItBody(r, c - 1, snake)){
             openDirctss.add("left");
         }
-        // right
-        if (c + 1 < cols && !isBody(r, c + 1, snake)){
+        //right
+        if (c + 1 < cols && !isItBody(r, c + 1, snake)){
             openDirctss.add("right");
         }
 
         return openDirctss;
     }
 
-    public static boolean isBody(int r, int c, ArrayList<int[]> snake) {
+    public static boolean isItBody(int r, int c, ArrayList<int[]> snake) {
         for (int i = 1; i < snake.size(); i++) {
             if (snake.get(i)[0] == r && snake.get(i)[1] == c){
                 return true;
