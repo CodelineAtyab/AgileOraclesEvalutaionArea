@@ -1,11 +1,14 @@
 package com.agileoracleseval.slitheringeval.rima_altarshi;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+
 public class SnakeGame {
-   static int foodRow = -1;
+    static int foodRow = -1;
     static int foodCol = -1;
+
     public static void main(String[] args) throws InterruptedException {
         try {
             //Read the map.txt file
@@ -84,7 +87,7 @@ public class SnakeGame {
 
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
-                    if (map[r][c]==('*')) {
+                    if (map[r][c] == ('*')) {
                         foodRow = r;
                         foodCol = c;
                         foodExists = true;
