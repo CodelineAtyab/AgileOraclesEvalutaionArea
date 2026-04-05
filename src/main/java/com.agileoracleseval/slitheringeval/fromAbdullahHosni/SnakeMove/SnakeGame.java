@@ -2,6 +2,7 @@ package com.agileoracleseval.slitheringeval.fromAbdullahHosni.SnakeMove;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,13 +15,26 @@ public class SnakeGame {
         //--------------------------------------------
         try {
 
-                for (String input : args) {
-                    System.out.println(input);
+            //validation: check both arguments.
+            if (args.length< 2){
+                System.out.println("Game accepts exactly 2 arguments: <direction> and <steps>");
+            }
+
+            //validation: check direction is withing {up, down , right, left}
+            List<String> validDirections = null;
+            validDirections =  Arrays.asList("up", "down", "left", "right");
+            if (!validDirections.contains(args[0])) {
+                System.out.println("invalid <direction> try: up down left right");
 
             }
+
+            else {System.out.println("MOVEMENT Validated: \nMoving " + args[0] + " for " + args[1] + " steps.");}
+
         } catch (Exception e) {
-            System.out.println("Invalid Direction");
+            System.out.println("GAME STILL RUNNING");
         }
+
+
 //        System.out.println("ARGS COUNT: " + args.length);
 //        for (String a : args) {
 //            System.out.println("ARG: " + a);
@@ -73,7 +87,7 @@ public class SnakeGame {
             resumeGamePath = Path.of("./src/main/java/com.agileoracleseval/slitheringeval/fromAbdullahHosni/SnakeMove/snakePos.txt");
 
             if (Files.exists(resumeGamePath) && Files.size(resumeGamePath) > 0) {
-                System.out.println(" *CONTINUE GAME*");
+                System.out.println(" *RESUMEING GAME*");
 
                 List<String> savedGame = Files.readAllLines(resumeGamePath);
 
@@ -114,7 +128,7 @@ public class SnakeGame {
 
             }
         } catch (Exception e) {
-            System.out.println("Error syncing snake positions");
+            System.out.println("Error: FAILED syncing snake positions in Game!");
             throw new RuntimeException(e);
         }
 
@@ -151,9 +165,27 @@ public class SnakeGame {
             colDirection = 1;       //go right of the col
         }
 
+        int steps;
+        try{
+            if (args[1].isEmpty()){
+                steps = Integer.parseInt(args[1]);
+            }
+            else {
+                steps = 1;
+            }
 
-        int steps = Integer.parseInt(args[1]);
-        boolean checkHitSelf = true;
+            //validation: if user not enterd <steps>
+            if (args[1].isEmpty()){
+                steps = 1;
+            } else if (steps< 0) {
+                System.out.println("Fault: please enter a valid <steps> : do use numbers only or positive numbers");
+            }
+        } catch (ArrayIndexOutOfBoundsException e){
+            steps = 1;
+        }
+
+
+        boolean checkHitSelf = false;
         for (int loop = 0; loop < steps; loop++) {
             //the move
             int[] currentHead = snakeBody.peekLast();   //head element on queue. {0,1} == {row, col}
@@ -198,6 +230,7 @@ public class SnakeGame {
 
         }
 
+
         if (checkHitSelf == true){
             System.out.println("+--------------------------------+");
             System.out.println("+----------------------------------+");
@@ -209,7 +242,7 @@ public class SnakeGame {
             //print the board rows and columns
             for (int row = 0; row < array2d.length; row++) {
                 for (int col = 0; col < array2d[0].length; col++) {
-                    System.out.printf("%s", array2d[row][col]); //2d array is printing
+                    System.out.print(array2d[row][col] + " "); //2d array is printing
                 }
                 System.out.println();
             }
@@ -238,7 +271,7 @@ public class SnakeGame {
             Files.writeString(positionSnake, positionData.toString());
 
         } catch (Exception e) {
-            System.out.println("Error saving the Snake position .txt file");
+            System.out.println("FAILED: CANNOT save the Snake position .txt file.");
             throw new RuntimeException(e);
         }
 
@@ -250,9 +283,10 @@ public class SnakeGame {
                 return true;
             }
         }
-
         return false;
     }
+
+
 
 
 }
