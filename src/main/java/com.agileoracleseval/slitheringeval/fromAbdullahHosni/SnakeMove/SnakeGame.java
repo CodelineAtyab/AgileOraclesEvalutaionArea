@@ -73,8 +73,6 @@ public class SnakeGame {
             throw new RuntimeException(e);
         }
 
-
-
         //--------------------------------------------
         // STEP 3 - Building the snake in game.
         //--------------------------------------------
