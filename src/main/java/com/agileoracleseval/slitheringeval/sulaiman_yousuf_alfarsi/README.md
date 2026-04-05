@@ -6,32 +6,50 @@ A simple command-line Snake game where the snake moves using arguments and saves
 
 ## ▶ Run
 
-First build the project:
+Navigate to the source folder first:
+```bash
+cd src\main\java\com\agileoracleseval\slitheringeval\sulaiman_yousuf_alfarsi
+```
 
-Then run from terminal:
+**Reset the map:**
+```bash
+java MoveSnake.java reset
+```
 
-reset:
-java -cp target/classes com.agileoracleseval.slitheringeval.sulaiman_yousuf_alfarsi.MoveSnake reset
+**Move the snake:**
+```bash
+java MoveSnake.java up
+java MoveSnake.java down
+java MoveSnake.java left
+java MoveSnake.java right
+```
 
-move the snake:
-java -cp target/classes com.agileoracleseval.slitheringeval.sulaiman_yousuf_alfarsi.MoveSnake up 
-java -cp target/classes com.agileoracleseval.slitheringeval.sulaiman_yousuf_alfarsi.MoveSnake down
-java -cp target/classes com.agileoracleseval.slitheringeval.sulaiman_yousuf_alfarsi.MoveSnake right
-java -cp target/classes com.agileoracleseval.slitheringeval.sulaiman_yousuf_alfarsi.MoveSnake left
+**Move multiple steps:**
+```bash
+java MoveSnake.java right 3
+java MoveSnake.java up 2
+```
+---
 
 ## Usage
 
-Directions:
-- up
-- down
-- left
-- right
+| Argument | Description |
+|----------|-------------|
+| `up` | Move snake up |
+| `down` | Move snake down |
+| `left` | Move snake left |
+| `right` | Move snake right |
+| `reset` | Reset map to original state |
+
+An optional second argument sets the number of steps (default is 1).
 
 ---
+
+
 
 ## Notes
 
 - Snake wraps around edges
 - Cannot collide with itself
-- State is saved in `map.txt`
+- State is saved automatically in `map.txt` after every move
 - Use `reset` to restart the game

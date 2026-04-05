@@ -1,7 +1,6 @@
 package com.agileoracleseval.slitheringeval.sulaiman_yousuf_alfarsi;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
 
@@ -25,11 +24,8 @@ public class MoveSnake {
 
         // reset
         if (args[0].equalsIgnoreCase("reset")) {
-            Path resetPath = null;
-            try {
-                resetPath = Path.of(
-                        MoveSnake.class.getResource("map.txt").toURI());
-            } catch (Exception e) {
+            Path resetPath = getMapPath();
+            if (!Files.exists(resetPath)) {
                 System.out.println("ERROR: map.txt not found!");
                 return;
             }
@@ -63,14 +59,8 @@ public class MoveSnake {
         }
 
         // read file
-        Path mapPath = null;
-
-        try {
-            mapPath = Path.of(
-                    MoveSnake.class.getResource("map.txt").toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (NullPointerException e) {
+        Path mapPath = getMapPath();
+        if (!Files.exists(mapPath)) {
             System.out.println("ERROR: map.txt not found!");
             return;
         }
@@ -163,6 +153,23 @@ public class MoveSnake {
         }
 
         printMap();
+    }
+
+
+    // get map.txt path — current working directory first, then fallback
+    static Path getMapPath() {
+        Path local = Path.of("map.txt");
+        if (Files.exists(local)) return local;
+
+        try {
+            Path source = Path.of(
+                    MoveSnake.class.getProtectionDomain()
+                            .getCodeSource().getLocation().toURI()
+            ).resolve("map.txt");
+            if (Files.exists(source)) return source;
+        } catch (Exception ignored) {}
+
+        return local;
     }
 
 
@@ -329,7 +336,6 @@ public class MoveSnake {
             int c = dir[1];
             int nameIndex = dir[2];
 
-            // apply wrap to check correct cell
             int wrappedR = r;
             int wrappedC = c;
             if (wrappedR < 0)     wrappedR = ROWS - 1;
