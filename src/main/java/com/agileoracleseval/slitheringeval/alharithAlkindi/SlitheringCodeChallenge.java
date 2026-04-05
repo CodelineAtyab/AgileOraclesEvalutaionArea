@@ -79,7 +79,7 @@ public class SlitheringCodeChallenge {
                     isMove = false;
                     continue;
                 default:
-                    System.out.println("Invalid direction! Use U, D, L, R");
+                    System.out.println("Invalid direction! Use W, A, S, D");
                     continue;
             }
 
