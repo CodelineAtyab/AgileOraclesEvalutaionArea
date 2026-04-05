@@ -1,8 +1,6 @@
 package com.agileoracleseval.slitheringeval.mariyaallamki.ProjectSlithering;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.nio.file.*;
 import java.util.*;
@@ -17,55 +15,72 @@ public class MoveSnake {
     public static ArrayList<int[]> snakeArrow = new ArrayList<>();
 
 
-
-
     public static void main(String[] args){
         if (args.length==0){
-            System.out.println("Enter a Valid CMD code: java javaFileName -Direction- -Steps-");
+            System.out.println("Enter a Valid Program Argument : Direction{up or down or left or right} Steps");
             return;
         }
 
 
-        String direction = args[0].toLowerCase();
+        String snakeDirection = args[0].toLowerCase();
         int snakeSteps = 1;
 
-        if(args.length >=2){
-            snakeSteps = Integer.parseInt(args[1]);
+
+        if (    !snakeDirection.equals("up") &&
+                !snakeDirection.equals("down") &&
+                !snakeDirection.equals("left") &&
+                !snakeDirection.equals("right")){
+            System.out.println("Please specify the right Direction {down,up,left,right}");
+            return;
+        }
+
+
+        if(args.length >=2) {
+            try {
+                snakeSteps = Integer.parseInt(args[1]);
+                if(snakeSteps <=0){
+                    System.out.println("Snake steps must be an + Integer");
+                    return;
+                }
+            } catch (NumberFormatException e){
+                System.out.println("An Error occurred: Snake steps must be an + Integer");
+                return;
+            }
         }
 
         try{
-
             filePath();
+
             loadSnakeMap();
+
             getSnake();
-
-
-
 
             boolean passed = true;
             for(int x=0;x<snakeSteps; x++) {
-                if (!moveSnake(direction)) {
+                if (!moveSnake(snakeDirection)) {
                     passed = false;
                     break;
                 }
             }
+
             if (!passed)
             {
                 showDirection();
             }
-            else{
+            else
+            {
 
                 saveSnakeMap();
+
                 printSnakePath();
+
             }
-        }
-        catch (Exception e){
-            System.out.println("Error");
+        } catch (Exception e){
+
+            System.out.println("Error Occurred");
+            e.printStackTrace();
         }
     }
-
-
-
 
 
     public static void filePath() {
@@ -93,9 +108,12 @@ public class MoveSnake {
             ArrayList<String> rows = new ArrayList<>(Arrays.asList(section));
             grids.add(rows);
         }
+
+        if(grids.size()<15 || grids.get(0).size()<15){
+            System.out.println("Snake Map Grid must be 15X15");
+            System.exit(1);
+        }
     }
-
-
 
 
 
@@ -117,7 +135,6 @@ public class MoveSnake {
 
 
 
-
     public static boolean moveSnake(String direction){
         int[] snakeHead = snakeArrow.get(snakeArrow.size() -1);
 
@@ -126,9 +143,9 @@ public class MoveSnake {
 
 
         if(direction.equals("up")) rows--;
-        if(direction.equals("down")) rows++;
-        if(direction.equals("right")) columns++;
-        if(direction.equals("left")) columns--;
+        else if(direction.equals("down")) rows++;
+        else if(direction.equals("right")) columns++;
+        else if(direction.equals("left")) columns--;
 
         //if(isInvalid(rows,columns)) return false;
 
