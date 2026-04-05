@@ -7,8 +7,6 @@ import java.util.Scanner;
 
 
 public class SnakeMove {
-
-
     public static void main(String[] argumentsInput) throws IOException {
 
         //  Part 1. Validate CLI user input
@@ -84,7 +82,7 @@ public class SnakeMove {
         }
 
 
-        //  Part 2: Validate map.txt content
+        //  Part 2: Validate map.txt content & Create 2D Array
         //  Rows
         int rows = rowsData.size();
         if (rows == 0) {
@@ -135,7 +133,6 @@ public class SnakeMove {
             System.out.println();
         }
 
-        //  Part 2: Validate map.txt content
 
         //  Locating the Snake in the Grid
         LinkedList<int[]> snake = new LinkedList<>();
@@ -152,8 +149,8 @@ public class SnakeMove {
             return;
         }
 
-        //  Moving the Snake
-        // Repeating Number of Steps
+        //  Part.3 Moving the Snake
+        // Repeating Number of Steps Entered
         for (int step = 0; step < steps; step++) {
             //  Get the Last Element in the LinkedList
             int[] head = snake.getLast();
@@ -229,4 +226,3 @@ public class SnakeMove {
         System.out.println();
     }
 }
-
