@@ -20,8 +20,10 @@ public class SnakeGame {
         int step = Integer.parseInt(args[1]);
 
         //for the movement of directions
-        int directionRow = 0;
-        int directionCol = 0;
+        int directionRow = 0;//up /down
+        int directionCol = 0;//left / right
+
+        //what user enter in the arg
         if (direction.equals("up")) {
             directionRow = -1;
         } else if (direction.equals("Down")) {
@@ -49,9 +51,10 @@ public class SnakeGame {
 
         //movement for steps:
         for (int i = 0; i < step; i++) {
+            //1.calculate next positions:
             int nextRow = CurrRightmost[0] + directionRow;
             int nextCol = CurrRightmost[1] + directionCol;
-
+            //this CurrRightmost functions return new head positions
             CurrRightmost = moveSnake(area, snake, CurrRightmost, new int[]{nextRow, nextCol});
         }
         //after move
@@ -66,66 +69,79 @@ public class SnakeGame {
 
     //move snake from CurrRightmost to nextRightmost
     public static int[] moveSnake(char[][] area, LinkedList<int[]> snake, int[] CurrRightmost, int[] nextRightmost) {
-        int rowRightmost = nextRightmost[0];
-        int colRightmost = nextRightmost[1];
+        //notice row+col
+        int row = nextRightmost[0];
+        int col = nextRightmost[1];
 
-        //wall collision
-        if (rowRightmost < 0 || rowRightmost >= 15 || colRightmost < 0 || colRightmost >= 15) {
+        //2.wall collision
+        if (row < 0 || row >= 15 || col < 0 || col >= 15) {
             System.out.println("wall collision ");
             return CurrRightmost;
         }
 
-        //self collision
+        //3.self collision
+        //"i" here like counter of index go through parts of the snake
         for (int i = 0; i < snake.size(); i++) {
             int[] part = snake.get(i);
 
-            if (part[0] == rowRightmost && part[1] == colRightmost) {
+            if (part[0] == row && part[1] == col) {
                 System.out.println("self collision ");
                 return CurrRightmost;
             }
         }
-        //remove tail(leftmost)
+        //4.remove tail(leftmost)
         int[] leftmost = snake.removeFirst();
+        //update grid area, after remove tail replace with "-"
         area[leftmost[0]][leftmost[1]] = '-';
 
-        //add new head(rightmost)
-        snake.addLast(CurrRightmost);
-        area[rowRightmost][colRightmost] = 'o';
+        //5.add new head(rightmost)
+        snake.addLast(nextRightmost);
+        area[row][col] = 'o';
         return nextRightmost;
     }
-
+    /*
+   in this method will scan area(grid)+ collect
+   cell that contain 'o'
+    */
     public static LinkedList<int[]> findSnake(char[][] area) {
         LinkedList<int[]> snake = new LinkedList<>();
-        for (int rowRightmost = 0; rowRightmost < 15; rowRightmost++) {
-            for (int colRightmost = 0; colRightmost < 15; colRightmost++) {
-                if (area[rowRightmost][colRightmost] == 'o') {
-                    snake.add(new int[]{rowRightmost, colRightmost});
+        //use this loop to check every cell in the area
+        for (int row = 0; row < 15; row++) {
+            for (int col = 0; col < 15; col++) {
+                if (area[row][col] == 'o') {//check if cell contain part of snake
+                    snake.add(new int[]{row, col});//store positions into list
                 }
             }
         }
         return snake;
     }
-
+    //this print char[][]area
     public static void displayArea(char[][] area) {
-        for (int rowRightmost = 0; rowRightmost < 15; rowRightmost++) {
-            for (int colRightmost = 0; colRightmost < 15; colRightmost++) {
-                System.out.print(area[rowRightmost][colRightmost]);
-                if (colRightmost < 15 - 1) System.out.print(" ");
+        for (int row = 0; row < 15; row++) {//go through rows starts from 0-14 (15)
+            for (int col = 0; col < 15; col++) {
+                System.out.print(area[row][col]);//will print char in that cell
+                if (col < 15 - 1) System.out.print(" ");//print space between cells
+                //(col < 15 - 1) avoid printing space after last col
             }
             System.out.println();
         }
     }
-
+    //loadAndGetArea---> read & load file & convert content to char[15][15]
     public static char[][] loadAndGetArea() {
-        char[][] area = new char[15][15];
+        char[][] area = new char[15][15];//2D
         try {
+            //read the file as one string, (relativePath)--> location path
             String fileContent = Files.readString(Path.of(relativePath));
+            //spilt it to lines
             String[] lines = fileContent.split("\n");
-
-            for (int rowRightmost = 0; rowRightmost < 15; rowRightmost++) {
-                String[] cells = lines[rowRightmost].trim().split(" ");
-                for (int colRightmost = 0; colRightmost < 15; colRightmost++) {
-                    area[rowRightmost][colRightmost] = cells[colRightmost].charAt(0);
+            //read each line of the file
+            for (int row = 0; row < 15; row++){
+                //split each row into cells
+                String[] cells = lines[row].trim().split(" ");
+                for (int col = 0; col < 15; col++) {
+                    //cells it's an array of string not char, after split each
+                    // element is string even contain but area stores char so convert
+                    area[row][col] = cells[col].charAt(0);
                 }
             }
 
@@ -134,16 +150,20 @@ public class SnakeGame {
         }
         return area;
     }
-
+    //FileWriter--> open the file to writing+ auto close the file
     public static void saveArea(char[][] area) {
         try (FileWriter fw = new FileWriter(relativePath)) {
-            for (int rowRightmost = 0; rowRightmost < 15; rowRightmost++) {
-                for (int colRightmost = 0; colRightmost < 15; colRightmost++) {
-                    fw.write(area[rowRightmost][colRightmost]);
-                    if (colRightmost < 15 - 1) fw.write(' ');
+            //scan every r+c
+            for (int row = 0; row < 15; row++) {
+                for (int col = 0; col < 15; col++) {
+                    //write char into file
+                    fw.write(area[row][col]);
+                    //add space between col
+                    if (col < 15 - 1) fw.write(' ');
                 }
                 fw.write('\n');
             }
+            //if writes fails throw Runtime,stop program show an error message
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
