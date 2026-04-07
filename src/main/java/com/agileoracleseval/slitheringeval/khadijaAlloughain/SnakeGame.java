@@ -8,136 +8,132 @@ public class SnakeGame {
 
     public static void main(String[] args) {
 
-        // Accept only 2 arguments
+        // 1. CLI arguments validation
         if (args.length != 2) {
-            System.out.println("<direction> <steps>");
+            System.out.println(" Enter in CLI 1.direction 2.steps");
             return;
         }
 
+        // 2. steps validation
         String direction = args[0].toLowerCase();
-        int steps;
-
-        // Check valid steps 1- positive 2- Integer
+        int steps = 0;
         try {
             steps = Integer.parseInt(args[1].trim());
-            if (steps <= 0) {
-                System.out.println("Steps must be a positive integer!");
-                return;
-            }
         } catch (NumberFormatException e) {
-            System.out.println("Steps must be a valid integer!");
+            System.out.println("Steps must be a positive integer!");
             return;
         }
 
-        // Check valid direction
-        if (!(direction.equals("up") || direction.equals("down") ||
-                direction.equals("left") || direction.equals("right"))) {
-            System.out.println("Invalid direction! Use: up, down, left, or right.");
-            return;
-        }
-
-        // Initialize map and snake - Fixed map size
+        // 3. 2D -> map 15 * 15
         char[][] maps = new char[15][15];
+        // 4. Linkedlist --> (FIFO): first in first out //addLast  //removefirst
         LinkedList<int[]> snake = new LinkedList<>();
+        // path of map
+        Path path = Paths.get("map.txt");
 
-        // Reading From File
-        Path pathFile = Paths.get("map.txt");
-        List<String> lines = new ArrayList<>();
         try {
-            lines = Files.readAllLines(pathFile);
-        } catch (IOException e) {
-            System.out.println("Cannot read map.txt. Using empty map.");
-        }
+            if (!Files.exists(path)) {
+                throw new IOException("map.txt not found! Please create the file first.");
+            }
 
-        // Fill map array
-        for (int i = 0; i < 15; i++) {
-            Arrays.fill(maps[i], '-');
-            if (i < lines.size()) {
-                String line = lines.get(i);
-                for (int j = 0; j < Math.min(line.length(), 15); j++) {
-                    maps[i][j] = line.charAt(j);
+            // Read from text file map.txt
+            List<String> lines = Files.readAllLines(path);
+
+            // Load map from file into the 2D array
+            for (int i = 0; i < 15; i++) {
+                String[] cells;
+                if (i < lines.size()) {
+                    cells = lines.get(i).trim().split("\\s+");
+                } else {
+                    cells = new String[0];
+                }
+                for (int j = 0; j < 15; j++) {
+                    if (j < cells.length && !cells[j].isEmpty()) {
+                        maps[i][j] = cells[j].charAt(0);
+                    } else {
+                        maps[i][j] = '-';
+                    }
                 }
             }
-        }
 
+            // Search about snake body location
 
-        // Clear old snake positions
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
-                if (maps[i][j] == 'o') maps[i][j] = '-';
-            }
-        }
-
-        // Initialize snake size = 5
-        snake.clear();
-        for (int j = 5; j <= 9; j++) {
-            maps[7][j] = 'o';
-            snake.add(new int[]{7, j});
-        }
-
-        System.out.println("\nInitial Map:\n");
-        printMap(maps);
-
-        // Move snake
-        for (int i = 0; i < steps; i++) {
-            int[] head = snake.getLast();
-            int newRow = head[0];
-            int newCol = head[1];
-
-            switch (direction) {
-                case
-                        "up": newRow--;
-                break;
-                case
-                        "down":  newRow++;
-                break;
-                case
-                        "left":  newCol--;
-                break;
-                case
-                        "right": newCol++;
-                break;
+            for (int r = 0; r < 15; r++) {
+                for (int c = 0; c < 15; c++) {
+                    if (maps[r][c] == 'o') {
+                        snake.add(new int[]{r, c});
+                    }
+                }
             }
 
-            // Wrap-around ---> The Bouns 50%
-            if (newRow < 0) newRow = 14;
-            if (newRow >= 15) newRow = 0;
-            if (newCol < 0) newCol = 14;
-            if (newCol >= 15) newCol = 0;
+            System.out.println("\nInitial Map:");
+            printMap(maps);
 
-            // Add new head
-            snake.addLast(new int[]{newRow, newCol});
-            maps[newRow][newCol] = 'o';
+            // 4. Movement logic
+            boolean collision = false;
+            for (int i = 0; i < steps; i++) {
+                int[] head = snake.getLast();
+                int newRow = head[0];
+                int newCol = head[1];
 
-            // Remove tail to keep size = 5
-            if (snake.size() > 5) {
+                switch (direction) {
+                    case
+                            "up":    newRow--;
+                        break;
+                    case
+                            "down":  newRow++;
+                        break;
+                    case
+                            "left":  newCol--;
+                        break;
+                    case
+                            "right": newCol++;
+                        break;
+                }
+
+                // Wrap-around ---> %50 Bouns
+                if (newRow < 0) newRow = 14;
+                if (newRow >= 15) newRow = 0;
+                if (newCol < 0) newCol = 14;
+                if (newCol >= 15) newCol = 0;
+
+                // Collision detection
+                if (maps[newRow][newCol] == 'o') {
+                    System.out.println("GAME OVER! Hit body at: " + newRow + "," + newCol);
+                    collision = true;
+                    break;
+                }
+
+                // Update Snake Position
+                snake.addLast(new int[]{newRow, newCol});
+                maps[newRow][newCol] = 'o';
                 int[] tail = snake.removeFirst();
                 maps[tail[0]][tail[1]] = '-';
             }
-        }
 
-        System.out.println("\nFinal Map:");
-        printMap(maps);
-
-        int[] head = snake.getLast();
-        System.out.println("Player Head Location: Row " + head[0] + ", Column " + head[1]);
-
-        // Saving The New Movement
-        try {
-            List<String> output = new ArrayList<>();
-            for (int i = 0; i < 15; i++) {
-                StringBuilder row = new StringBuilder();
-                for (int j = 0; j < 15; j++) {
-                    row.append(maps[i][j]);
-                }
-                output.add(row.toString());
+            if (!collision) {
+                System.out.println("\nMovement complete.");
             }
-            Files.write(pathFile, output);
-            System.out.println("\nMap updated successfully!");
+
+            System.out.println("\nFinal Map:");
+            printMap(maps);
+
+            //  Save the updated map
+            StringBuilder finalMapData = new StringBuilder();
+            for (int i = 0; i < 15; i++) {
+                for (int j = 0; j < 15; j++) {
+                    finalMapData.append(maps[i][j]).append(" ");// add space between - -
+                }
+                finalMapData.append("\n");// New line at the end of every row
+            }
+
+            Files.writeString(path, finalMapData.toString());
+            System.out.println("\nMap updated successfully in map.txt!");
+
         } catch (IOException e) {
-            System.out.println("Error saving map: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());// show specific cause of the problem that caused the program to stop at that moment.
+
         }
-        // End Saving
     }
 
     private static void printMap(char[][] maps) {
