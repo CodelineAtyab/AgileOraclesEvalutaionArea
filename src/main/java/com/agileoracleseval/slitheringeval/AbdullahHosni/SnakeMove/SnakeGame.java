@@ -1,4 +1,4 @@
-package com.agileoracleseval.slitheringeval.fromAbdullahHosni.SnakeMove;
+package com.agileoracleseval.slitheringeval.AbdullahHosni.SnakeMove;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
