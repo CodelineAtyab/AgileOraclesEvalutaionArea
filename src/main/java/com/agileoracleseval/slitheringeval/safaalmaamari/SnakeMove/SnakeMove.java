@@ -78,7 +78,13 @@ public class SnakeMove{
                     head = snake.getFirst();
                     System.out.println("old snake position"+" "+snake.toString());
                     System.out.println("-------------------------------");
-                    Point newHead = new Point(head.x-1, head.y);
+                    int x;
+                    if ( head.x-1==-1){
+                        x= map.length-1;
+                    }else{
+                        x= head.x-1;
+                    }
+                    Point newHead = new Point(x, head.y);
                     snake.remove(snake.size() - 1);
                     snake.push(newHead);
 
@@ -99,7 +105,12 @@ public class SnakeMove{
                     head = snake.getFirst();
                     System.out.println("old snake position"+" "+snake.toString());
                     System.out.println("-------------------------------");
-                    Point newHead = new Point(head.x+1, head.y);
+                    int x;
+                    if(head.x+1== map.length){
+                        x=0;
+                    }else{ x= head.x+1;
+                    }
+                    Point newHead = new Point(x, head.y);
                     snake.remove(snake.size() - 1);
                     snake.push(newHead);
 
@@ -118,7 +129,7 @@ public class SnakeMove{
                     head = snake.getFirst();
                     System.out.println("old snake position"+" "+snake.toString());
                     System.out.println("-------------------------------");
-                    Point newHead = new Point(head.x, head.y - 1);
+                    Point newHead = new Point(head.x, head.y-1);
                     snake.remove(snake.size() - 1);
                     snake.push(newHead);
 
@@ -137,7 +148,7 @@ public class SnakeMove{
                     head = snake.getFirst();
                     System.out.println("old snake position"+" "+snake.toString());
                     System.out.println("-------------------------------");
-                    Point newHead = new Point(head.x, head.y + 1);
+                    Point newHead = new Point(head.x, head.y+1);
                     snake.remove(snake.size() - 1);
                     snake.push(newHead);
                     System.out.println("new snake position"+" "+snake.toString());
@@ -199,7 +210,7 @@ public class SnakeMove{
             int y = snake.get(i).y;
             map[x][y] = 'o';
         }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("map.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("C:/Users/Codeline/Desktop/Evaluation/AgileOraclesEvalutaionArea/src/main/java/com/agileoracleseval/slitheringeval/safaalmaamari/SnakeMove/m.txt"))) {
             for (int row = 0; row < map.length; row++) {
                 for (int col = 0; col < map[row].length; col++) {
                     writer.write(map[row][col] + " ");
