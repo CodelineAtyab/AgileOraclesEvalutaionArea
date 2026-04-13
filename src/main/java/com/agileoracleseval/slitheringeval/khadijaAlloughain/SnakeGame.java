@@ -29,7 +29,7 @@ public class SnakeGame {
         // 4. Linkedlist --> (FIFO): first in first out //addLast  //removefirst
         LinkedList<int[]> snake = new LinkedList<>();
         // path of map
-        Path path = Paths.get("map.txt");
+        Path path = Paths.get("src/main/java/com/agileoracleseval/slitheringeval/khadijaAlloughain/map.txt");
 
         try {
             if (!Files.exists(path)) {
@@ -56,6 +56,19 @@ public class SnakeGame {
                 }
             }
 
+            System.out.println("\nInitial Map:");
+
+            for (int r = 0; r < 15; r++) {
+                for (int c = 0; c < 15; c++) {
+                    if (r == 7 && c >= 5 && c <= 9) {
+                        System.out.print("o ");
+                    } else {
+                        System.out.print("- ");
+                    }
+                }
+                System.out.println();
+            }
+
             // Search about snake body location
 
             for (int r = 0; r < 15; r++) {
@@ -66,13 +79,13 @@ public class SnakeGame {
                 }
             }
 
-            System.out.println("\nInitial Map:");
+            System.out.println("\nPrevious Map:");
             printMap(maps);
 
             // 4. Movement logic
             boolean collision = false;
             for (int i = 0; i < steps; i++) {
-                int[] head = snake.getLast();
+                int[] head = snake.getLast();//---> the head (the newest part of the snake)
                 int newRow = head[0];
                 int newCol = head[1];
 
@@ -105,9 +118,9 @@ public class SnakeGame {
                 }
 
                 // Update Snake Position
-                snake.addLast(new int[]{newRow, newCol});
+                snake.addLast(new int[]{newRow, newCol});//new head
                 maps[newRow][newCol] = 'o';
-                int[] tail = snake.removeFirst();
+                int[] tail = snake.removeFirst();//tail
                 maps[tail[0]][tail[1]] = '-';
             }
 
@@ -131,7 +144,8 @@ public class SnakeGame {
             System.out.println("\nMap updated successfully in map.txt!");
 
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());// show specific cause of the problem that caused the program to stop at that moment.
+            System.out.println("Error: " + e.getMessage());// show specific
+            // problem that caused the program to stop at that moment.
 
         }
     }
