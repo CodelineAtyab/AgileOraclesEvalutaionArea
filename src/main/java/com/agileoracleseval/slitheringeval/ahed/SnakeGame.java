@@ -175,7 +175,7 @@ public class SnakeGame {
         }
     }
 
-    public static final String relativePath = "src/main/resources/Game.txt";
+    public static final String relativePath = "src/main/java/com/agileoracleseval/slitheringeval/ahed/Game.txt";
 }
 
 
