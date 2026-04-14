@@ -8,7 +8,7 @@ import java.util.Queue;
 public class MoveSnake {
     public static void main(String[] args) throws Exception {
 
-        Path file = Path.of("src/main/resources/map.txt");
+        Path file = Path.of("src/main/java/com/agileoracleseval/slitheringeval/safaAlsibani/map.txt");
         String data = Files.readString(file);
         String[] lines = data.split("\\R");
 
