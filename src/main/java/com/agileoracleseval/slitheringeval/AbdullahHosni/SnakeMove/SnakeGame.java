@@ -1,0 +1,290 @@
+package com.agileoracleseval.slitheringeval.AbdullahHosni.SnakeMove;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+
+public class SnakeGame {
+    public static void main(String[] args) {
+
+        //--------------------------------------------
+        // STEP 1 - TAKING INPUT .CMD COMMAND LINE .
+        //--------------------------------------------
+        try {
+
+            //validation: check both arguments.
+            if (args.length< 2){
+                System.out.println("Game accepts exactly 2 arguments: <direction> and <steps>");
+            }
+
+            //validation: check direction is withing {up, down , right, left}
+            List<String> validDirections = null;
+            validDirections =  Arrays.asList("up", "down", "left", "right");
+            if (!validDirections.contains(args[0])) {
+                System.out.println("invalid <direction> try: up down left right");
+
+            }
+
+            else {System.out.println("MOVEMENT Validated: \nMoving " + args[0] + " for " + args[1] + " steps.");}
+
+        } catch (Exception e) {
+            System.out.println("GAME STILL RUNNING");
+        }
+
+
+//        System.out.println("ARGS COUNT: " + args.length);
+//        for (String a : args) {
+//            System.out.println("ARG: " + a);
+//        }
+        //--------------------------------------------
+        // STEP 2 - Loading 2d Array Game board .
+        //--------------------------------------------
+        Path boardPath = null;
+        char array2d[][] = null;
+
+        try {
+            boardPath = Path.of("./src/main/java/com.agileoracleseval/slitheringeval/fromAbdullahHosni/SnakeMove/board.txt");
+        } catch (Exception e) {
+            System.out.println("Cannot load Game");
+            throw new RuntimeException(e);
+        }
+
+        try {
+            String pathContent = Files.readString(boardPath);
+            String[] splitContent = pathContent.split("\n");
+            int SplitLength = splitContent[0].length();
+
+            array2d = new char[splitContent.length][SplitLength];  // Load it in 2D Array or Array of Arrays
+
+            for (int row = 0; row < splitContent.length; row++) {
+                char[] currRow = splitContent[row].toCharArray();
+                // System.out.printf("%s\n", linesOfFile[row]);
+
+                for (int col = 0; col < currRow.length; col++) {
+                    array2d[row][col] = currRow[col];
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("CANNOT BOOT GAME BOARD!");
+            throw new RuntimeException(e);
+        }
+
+        //--------------------------------------------
+        // STEP 3 - Building the snake in game.
+        //--------------------------------------------
+        Deque<int[]> snakeBody = new LinkedList<>();       //Queue to represent the snake
+
+        Path resumeGamePath = null;
+
+        try {
+
+            resumeGamePath = Path.of("./src/main/java/com.agileoracleseval/slitheringeval/fromAbdullahHosni/SnakeMove/snakePos.txt");
+
+            if (Files.exists(resumeGamePath) && Files.size(resumeGamePath) > 0) {
+                System.out.println(" *RESUMEING GAME*");
+
+                List<String> savedGame = Files.readAllLines(resumeGamePath);
+
+                for (String line : savedGame) {
+                    String[] progress = line.split(",");
+
+                    int rowProgress = Integer.parseInt(progress[0]);
+                    int colProgress = Integer.parseInt(progress[1]);
+                    snakeBody.add(new int[]{rowProgress, colProgress});
+                }
+
+                // CLEAN the 2D array: Remove any default "o" characters
+                for (int row = 0; row < array2d.length; row++) {
+                    for (int col = 0; col < array2d[0].length; col++) {
+
+                        if (array2d[row][col] == 'o') {
+                            array2d[row][col] = '-';
+                        }
+                    }
+
+                }
+
+                for (int[] line : snakeBody) {
+                    array2d[line[0]][line[1]] = 'o';
+
+                }
+            } else {
+                // DEFAULT game (start new game , restart game)
+                System.out.println(" *NEW GAME STARTED*");
+                for (int row = 0; row < array2d.length; row++) {
+                    for (int col = 0; col < array2d[0].length; col++) {
+
+                        if (array2d[row][col] == 'o') {
+                            snakeBody.add(new int[]{row, col});  //Enqueing/saving all snake body in {snakebody} queue.
+                        }
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            System.out.println("Error: FAILED syncing snake positions in Game!");
+            throw new RuntimeException(e);
+        }
+
+//        snakeBody.add(new int[]{7,5});
+//        snakeBody.add(new int[]{7,6});
+//        snakeBody.add(new int[]{7,8});
+//        snakeBody.add(new int[]{7,9});
+
+
+//        System.out.println(" Starting Game now!");
+//        for (int[] p : snakeBody){
+//            System.out.println(Arrays.toString(p) + " ");
+//
+//        }
+
+        //--------------------------------------------
+        // STEP 4 - snake movement direction .
+        //--------------------------------------------
+        int rowDirection = 0;
+        int colDirection = 0;       //declaring the direction delta {up,down, left ,right )
+        String direction = args[0].toLowerCase();
+
+        //direction delta
+        if (direction.equals("up")) {
+            rowDirection = -1;      //go up of the col
+        }
+        if (direction.equals("down")) {
+            rowDirection = 1;       //go DOWN int the row
+        }
+        if (direction.equals("left")) {
+            colDirection = -1;      //go LEFT of the col
+        }
+        if (direction.equals("right")) {
+            colDirection = 1;       //go right of the col
+        }
+
+        int steps;
+        try{
+            if (args[1].isEmpty()){
+                steps = Integer.parseInt(args[1]);
+            }
+            else {
+                steps = 1;
+            }
+
+            //validation: if user not enterd <steps>
+            if (args[1].isEmpty()){
+                steps = 1;
+            } else if (steps< 0) {
+                System.out.println("Fault: please enter a valid <steps> : do use numbers only or positive numbers");
+            }
+        } catch (ArrayIndexOutOfBoundsException e){
+            steps = 1;
+        }
+
+
+        boolean checkHitSelf = false;
+        for (int loop = 0; loop < steps; loop++) {
+            //the move
+            int[] currentHead = snakeBody.peekLast();   //head element on queue. {0,1} == {row, col}
+            int movementRow = currentHead[0] + rowDirection;
+            int movementCol = currentHead[1] + colDirection;
+
+
+            //bonus task: teleporting snake from border to border
+            // (Up/Down)
+            if (movementRow < 0) {
+                movementRow = array2d.length - 1; // Teleport to bottom
+            } else if (movementRow >= array2d.length) {
+                movementRow = 0; // Teleport to top
+            }
+            // (Left/Right)
+            if (movementCol < 0) {
+                movementCol = array2d[0].length - 1; // Teleport to far right
+            } else if (movementCol >= array2d[0].length) {
+                movementCol = 0; // Teleport to far left
+            }
+
+            //bonus: self collotion, snake is hitting it self
+            checkHitSelf = checkHitSelf(movementRow,movementCol,snakeBody);
+
+//            boolean hitSelt = false;
+//            for (int[] segment :  snakeBody) {
+//                if (segment[0] == movementRow && segment[1] == movementCol) {
+//                    hitSelt = true;
+//                    break;
+//                }
+//            }
+
+            int[] newhead = new int[]{movementRow, movementCol};
+            snakeBody.add(newhead);
+            array2d[newhead[0]][newhead[1]] = 'o';
+
+
+            int[] oldtail = snakeBody.poll();
+            array2d[oldtail[0]][oldtail[1]] = '-';
+
+
+
+        }
+
+
+        if (checkHitSelf == true){
+            System.out.println("+--------------------------------+");
+            System.out.println("+----------------------------------+");
+            System.out.println("GAME OVER: You hit\nyour own body!");
+
+
+        }
+        else {
+            //print the board rows and columns
+            for (int row = 0; row < array2d.length; row++) {
+                for (int col = 0; col < array2d[0].length; col++) {
+                    System.out.print(array2d[row][col] + " "); //2d array is printing
+                }
+                System.out.println();
+            }
+        }
+
+
+        //--------------------------------------------
+        // STEP 5 - saving game Progress in .txt .
+        //--------------------------------------------
+        Path positionSnake = null;
+
+        try {
+            positionSnake = Path.of("./src/main/java/com.agileoracleseval/slitheringeval/fromAbdullahHosni/SnakeMove/snakePos.txt");
+
+            if (Files.notExists(positionSnake.getParent())) {
+                Files.createDirectories(positionSnake.getParent());
+            }
+
+            StringBuilder positionData = new StringBuilder();
+
+            for (int[] loop : snakeBody) {
+                positionData.append(loop[0]).append(",").append(loop[1]).append("\n");
+                ;
+            }
+
+            Files.writeString(positionSnake, positionData.toString());
+
+        } catch (Exception e) {
+            System.out.println("FAILED: CANNOT save the Snake position .txt file.");
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static boolean checkHitSelf(int movementRow, int movementCol, Deque<int[]> snakeBody){
+        for (int[] segment : snakeBody) {
+            if (segment[0] == movementRow && segment[1] == movementCol) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+}
