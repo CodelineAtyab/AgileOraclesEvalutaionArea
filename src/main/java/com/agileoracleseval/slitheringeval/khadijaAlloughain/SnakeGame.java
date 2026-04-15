@@ -36,6 +36,27 @@ public class SnakeGame {
                 throw new IOException("map.txt not found! Please create the file first.");
             }
 
+            System.out.println("\nInitial Map:");
+
+            for (int r = 0; r < 15; r++) {
+                for (int c = 0; c < 15; c++) {
+                    if (r == 7) {
+                        if (c == 5) {
+                            System.out.print("& "); // tail -->(7,5)
+                        } else if (c >= 6 && c <= 8) {
+                            System.out.print("o "); // snake body
+                        } else if (c == 9) {
+                            System.out.print("@ "); // head --> (7,9)
+                        } else {
+                            System.out.print("- ");
+                        }
+                    } else {
+                        System.out.print("- ");
+                    }
+                }
+                System.out.println();
+            }
+
             // Read from text file map.txt
             List<String> lines = Files.readAllLines(path);
 
@@ -55,28 +76,26 @@ public class SnakeGame {
                     }
                 }
             }
+            // Search about snake body location
+            // 1. create temp array
+            List<int[]> bodyParts = new ArrayList<>();
+            int[] headPos = null;
 
-            System.out.println("\nInitial Map:");
-
+            // 2. save last position in temp arraylist
             for (int r = 0; r < 15; r++) {
                 for (int c = 0; c < 15; c++) {
-                    if (r == 7 && c >= 5 && c <= 9) {
-                        System.out.print("o ");
-                    } else {
-                        System.out.print("- ");
+                    if (maps[r][c] == 'o' || maps[r][c] == '&') {
+                        bodyParts.add(new int[]{r, c}); // put body and tail here
+                    } else if (maps[r][c] == '@') {
+                        headPos = new int[]{r, c}; // save head here in a lone array to make the movement always from it
                     }
                 }
-                System.out.println();
             }
 
-            // Search about snake body location
-
-            for (int r = 0; r < 15; r++) {
-                for (int c = 0; c < 15; c++) {
-                    if (maps[r][c] == 'o') {
-                        snake.add(new int[]{r, c});
-                    }
-                }
+            snake.clear();
+            snake.addAll(bodyParts); // first pos for tail because read the map start from left to right
+            if (headPos != null) {
+                snake.addLast(headPos); // for head
             }
 
             System.out.println("\nPrevious Map:");
@@ -89,19 +108,12 @@ public class SnakeGame {
                 int newRow = head[0];
                 int newCol = head[1];
 
+                // Direction:
                 switch (direction) {
-                    case
-                            "up":    newRow--;
-                        break;
-                    case
-                            "down":  newRow++;
-                        break;
-                    case
-                            "left":  newCol--;
-                        break;
-                    case
-                            "right": newCol++;
-                        break;
+                    case "up":    newRow--; break;
+                    case "down":  newRow++; break;
+                    case "left":  newCol--; break;
+                    case "right": newCol++; break;
                 }
 
                 // Wrap-around ---> %50 Bouns
@@ -111,7 +123,7 @@ public class SnakeGame {
                 if (newCol >= 15) newCol = 0;
 
                 // Collision detection
-                if (maps[newRow][newCol] == 'o') {
+                if (maps[newRow][newCol] == 'o' || maps[newRow][newCol] == '@' || maps[newRow][newCol] == '&') {
                     System.out.println("GAME OVER! Hit body at: " + newRow + "," + newCol);
                     collision = true;
                     break;
@@ -119,17 +131,28 @@ public class SnakeGame {
 
                 // Update Snake Position
                 snake.addLast(new int[]{newRow, newCol});//new head
-                maps[newRow][newCol] = 'o';
-                int[] tail = snake.removeFirst();//tail
+                int[] tail = snake.removeFirst();
                 maps[tail[0]][tail[1]] = '-';
+
+                // Snake body:
+                for (int j = 0; j < snake.size(); j++) {
+                    int[] part = snake.get(j);
+                    if (j == 0) {// first element inside in  snake body
+                        maps[part[0]][part[1]] = '&'; // tail
+                    } else if (j == snake.size() - 1) { // size = 5 ---> 5-1 = 4 last index in the row which mean the head (7,9).
+                        maps[part[0]][part[1]] = '@'; // head
+                    } else {
+                        maps[part[0]][part[1]] = 'o'; // middle body
+                    }
+                }
             }
 
             if (!collision) {
                 System.out.println("\nMovement complete.");
-            }
 
-            System.out.println("\nFinal Map:");
-            printMap(maps);
+                System.out.println("\nFinal Map:");
+                printMap(maps);
+            }
 
             //  Save the updated map
             StringBuilder finalMapData = new StringBuilder();
@@ -141,12 +164,11 @@ public class SnakeGame {
             }
 
             Files.writeString(path, finalMapData.toString());
-            System.out.println("\nMap updated successfully in map.txt!");
+            //System.out.println("\nMap updated successfully in map.txt!");
 
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());// show specific
             // problem that caused the program to stop at that moment.
-
         }
     }
 
