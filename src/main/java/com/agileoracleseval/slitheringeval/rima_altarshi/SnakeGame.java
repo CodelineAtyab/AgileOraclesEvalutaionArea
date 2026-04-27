@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 
 public class SnakeGame {
-    static  int width = 15;
-    static  int height = 15;
+    static int width = 15;
+    static int height = 15;
     static int score = 0;
 
     static Deque<int[]> snake = new LinkedList<>(); //stores snake body positions
@@ -18,35 +18,29 @@ public class SnakeGame {
     static int directionX = 0;
     static int directionY = 1;
     //where the game state is saved
-    static  String filePath = "src/main/java/com/agileoracleseval/slitheringeval/rima_altarshi/map.txt";
+    static String filePath = "src/main/java/com/agileoracleseval/slitheringeval/rima_altarshi/map.txt";
 
     public static void main(String[] args) {
         loadGame(); //load previous state if file exists
         Scanner sc = new Scanner(System.in); //read the input
-
         while (true) {
             printBoard(); //showing snake , food, score
             String direction;
             int steps = 1; // by default = 1
             while (true) {
                 System.out.println("Enter move (up,down, left and right): ");
-
                 String input = sc.nextLine().trim().toLowerCase();
                 String[] parts = input.split("\\s+"); //split by spaces
-
                 if (parts.length == 0 || parts[0].isEmpty()) {
                     System.out.println(" Invalid input!");
                     continue;
                 }
-
                 direction = parts[0];
-
                 if (!(direction.equals("up") || direction.equals("down") ||
                         direction.equals("left") || direction.equals("right"))) {
                     System.out.println(" Invalid direction!");
                     continue;
                 }
-
                 if (parts.length > 1) {
                     try {
                         steps = Integer.parseInt(parts[1]);
@@ -62,15 +56,12 @@ public class SnakeGame {
                 }
                 break;
             }
-
             setDirection(direction); //Converts e.g "up" to (directionX, directionY)
-
             for (int i = 0; i < steps; i++) {
                 if (!moveSnake()) {
                     System.out.println("The only open directions are: " + getOpenDirections());
                     break;
                 }
-
                 saveGame(); // persist after each successful move
             }
         }
@@ -109,15 +100,12 @@ public class SnakeGame {
         } else if (newY >= width) {
             newY = 0;
         }
-
         String newHead = newX + "," + newY;
-
         if (snakeSet.contains(newHead)) //checking collision
             return false;
         //add new position to snake linked list and snakeSet for fast lookup, so the snake moves forward
         snake.addFirst(new int[]{newX, newY});
         snakeSet.add(newHead);
-
         if (newX == foodX && newY == foodY) {
             score++; //if eat food increase score by 1
             placeFood(); // then generate new food
@@ -125,7 +113,6 @@ public class SnakeGame {
             int[] tail = snake.removeLast();
             snakeSet.remove(tail[0] + "," + tail[1]);
         }
-
         return true; //the movement successfully complete
     }
 
@@ -159,7 +146,6 @@ public class SnakeGame {
             //generate random position
             foodX = random.nextInt(height);
             foodY = random.nextInt(width);
-
             if (!snakeSet.contains(foodX + "," + foodY))
                 break;
         }
@@ -177,7 +163,6 @@ public class SnakeGame {
             board[part[0]][part[1]] = 'O';
         //draw the food
         board[foodX][foodY] = '*';
-
         System.out.println("\n--- SNAKE GAME ---");
         System.out.println("Score: " + score);
         //print the board (row by row)
@@ -188,12 +173,12 @@ public class SnakeGame {
             System.out.println();
         }
     }
+
     //checking which directions the snake can safely move without hitting itself
     static String getOpenDirections() {
         int[] head = snake.peekFirst(); //gets current head position
         //create list of safe directions to stores all valid moves
         List<String> open = new ArrayList<>();
-
         // up direction
         int upX = head[0] - 1;
         int upY = head[1];
@@ -205,7 +190,6 @@ public class SnakeGame {
         if (!snakeSet.contains(upX + "," + upY)) {
             open.add("UP"); // if safe the up direction is allowed
         }
-
         // down direction
         int downX = head[0] + 1;
         int downY = head[1];
@@ -216,22 +200,18 @@ public class SnakeGame {
         if (!snakeSet.contains(downX + "," + downY)) {
             open.add("DOWN");
         }
-
         // left direction
         int leftX = head[0];
         int leftY = head[1] - 1;
-
         if (leftY < 0) {
             leftY = width - 1;
         }
         if (!snakeSet.contains(leftX + "," + leftY)) {
             open.add("LEFT");
         }
-
         //right direction
         int rightX = head[0];
         int rightY = head[1] + 1;
-
         if (rightY >= width) {
             rightY = 0;
         }
@@ -248,19 +228,14 @@ public class SnakeGame {
     //  saves the current game board to a map.txt file
     static void saveGame() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
-            for (int rowIndex = 0; rowIndex < height; rowIndex++) {
-                for (int colIndex = 0; colIndex < width; colIndex++) {
-                    char c = '-'; //assume cell is empty
-                    String key = rowIndex + "," + colIndex; //convert position as string
-                    if (snakeSet.contains(key)){ //if belongs to the snake
-                        c = 'O';
-                    }
-                    if (rowIndex == foodX && colIndex == foodY){ //if belongs to the food
-                        c = '*';
-                    }
-                    pw.print(c + " ");
-                }
-                pw.println();
+            // Save score position
+            pw.println("SCORE " + score);
+            // Save food position
+            pw.println("FOOD " + "[" + foodX + "," + foodY + "]");
+            // Save snake position(from head to tail)
+            pw.print("SNAKE ");
+            for (int[] part : snake) {
+                pw.print("[" + part[0] + "," + part[1] + "] ");
             }
         } catch (IOException e) {
             System.out.println("Error saving game: " + e.getMessage());
@@ -275,41 +250,35 @@ public class SnakeGame {
             initGame();
             return; //stop the method
         }
-        //Remove previous snake positions and Prepare to rebuild from file
+        //remove previous snake positions and Prepare to rebuild from file
         snake.clear();
         snakeSet.clear();
         //list will store snake positions read from map.txt file
-        List<int[]> snakeCells = new ArrayList<>();
-        //scanner will reads map.txt file line by line
-        try (Scanner sc = new Scanner(file)) {
-            int row = 0;
-            //read each line
-            while (sc.hasNextLine() && row < height) {
-                String line = sc.nextLine(); //read one line
-                String[] cells = line.trim().split(" "); //then split each cell
-
-                for (int col = 0; col < Math.min(width, cells.length); col++) {
-                    String val = cells[col]; //read all cell value [-, 0, *]
-                    //if snake body
-                    if (val.equals("O")) {
-                        snakeCells.add(new int[]{row, col});
-                    } else if (val.equals("*")) { //if food
-                        foodX = row;
-                        foodY = col;
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.startsWith("SCORE")) {
+                    score = Integer.parseInt(line.split(" ")[1]);
+                } else if (line.startsWith("FOOD")) {
+                    String value = line.substring(line.indexOf("[") + 1, line.indexOf("]"));
+                    String[] xy = value.split(",");
+                    foodX = Integer.parseInt(xy[0].trim());
+                    foodY = Integer.parseInt(xy[1].trim());
+                } else if (line.startsWith("SNAKE")) {
+                    String body = line.replace("SNAKE", "").trim();
+                    String[] parts = body.split("\\s+");
+                    for (String p : parts) {
+                        p = p.replace("[", "").replace("]", ""); // to remove brackets
+                        String[] xy = p.split(",");
+                        int x = Integer.parseInt(xy[0].trim());
+                        int y = Integer.parseInt(xy[1].trim());
+                        snake.addLast(new int[]{x, y});
+                        snakeSet.add(x + "," + y);
                     }
                 }
-                row++; //move to next row
             }
-
-            // rebuild snakeSet
-            for (int[] p : snakeCells) {
-                snakeSet.add(p[0] + "," + p[1]);
-            }
-
-            // rebuild snake (simple order)
-            if (!snakeCells.isEmpty()) {
-                snake.addAll(snakeCells);
-            } else {
+            // if no snake found then start new game (initGame method)
+            if (snake.isEmpty()) {
                 initGame();
             }
 
