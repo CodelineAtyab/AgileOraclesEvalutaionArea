@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MoveSnake {
-
     // Global variables
     static final String file_name = "src/main/java/com/agileoracleseval/slitheringeval/aljolanda_alhandhali_MyEvalProject/map.txt"; // file name
     static int rows, cols; // number of rows and columns
@@ -14,7 +13,6 @@ public class MoveSnake {
     static LinkedList<int[]> snake = new LinkedList<>(); // snake body
 
     public static void main(String[] args) {
-
         // Check the number of input
         if (args.length < 1 || args.length > 2) {
             System.out.println("Error: java MoveSnake <direction> <steps>");
@@ -22,7 +20,7 @@ public class MoveSnake {
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+      
         // Reading the trend
         String direction = args[0].toLowerCase();
 
