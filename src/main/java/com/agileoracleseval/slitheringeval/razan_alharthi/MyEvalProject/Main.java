@@ -1,4 +1,4 @@
-package com.agileoracleseval.slitheringeval.your_full_name.SnakeMove;
+package com.agileoracleseval.slitheringeval.razan_alharthi.MyEvalProject;
 
 public class Main {
     public static void main(String[] args) {
