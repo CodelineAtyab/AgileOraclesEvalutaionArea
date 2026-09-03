@@ -1,63 +1,53 @@
-﻿## Submission Instructions
+# The Vacancy Loop
 
-To submit your JAVA Maven project as a solution, please follow these steps:
+The Vacancy Loop is an Oracle PL/SQL and Spring Boot project that automates the lifecycle of job vacancies.
 
-### Step 1: Install git on your PC
-- Install "git" as shown in this tutorial: [How to install git](https://youtu.be/iYkLrXobBbA?si=_l0haibv_X9NpIjJ)
-- Open command prompt and run
-  ```bash
-  git version
-  ```
-- If you see the version, then git is successfully installed.
+HR only inserts a vacancy. After that, the database handles the rest automatically.
 
-### Step 2: Fork the Repository
-- Navigate to [this repository](https://github.com/CodelineAtyab/AgileOraclesEvalutaionArea) provided by Codeline.
-- Click on the "Fork" button at the top-right corner of the page to create a copy of the repository under your own GitHub account.
+## Main Features
 
-### Step 3: Clone the Forked Repository
-- Open your terminal or command prompt.
-- Clone the forked repository to your local machine using the following command:
-  ```bash
-  git clone https://github.com/your-username/repo-name.git
-  ```
+- Automatically creates a notification when a vacancy is posted
+- Converts updated job descriptions to lowercase
+- Expires vacancies based on `expires_at`
+- Archives expired vacancies
+- Removes archived vacancies from the live board
+- Periodically cleans live vacancy descriptions
+- Stores job applications with foreign key validation
+- Creates a daily application digest
+- Exposes pending notifications through a PL/SQL `SYS_REFCURSOR`
+- Spring Boot consumes pending notifications and sends them to Slack
+- Successfully delivered notifications are marked as `SENT`
 
-### Step 4: Create a new branch
-- Navigate to the cloned repository directory
-  ```bash
-  cd repo-name
-  ```
-- Create a new branch for your code submissions (Replace your-name with your name in your-name-submission-branch):
-  ```bash
-  git checkout -b your-name-submission-branch
-  ```
+## Technologies
 
+- Oracle SQL / PL/SQL
+- Oracle `DBMS_SCHEDULER`
+- Java 17
+- Spring Boot
+- Maven
+- JDBC
+- Slack Incoming Webhook
 
-### Step 5: Add Your Code
-- Create a package by your full name at src/main/java/com/agileoracleseval/slitheringeval/your_full_name
-- Paste your Java Project Folder in src/main/java/com/agileoracleseval/slitheringeval/your_full_name/YourProjectFolderNameHere
-- For Example: src/main/java/com/agileoracleseval/slitheringeval/syed_atyab/ProjectSlithering
+## Database Tables
 
-### Step 6: Commit your changes
-- Run the following commands in order to commit your changes:
-  ```bash
-  git add *
-  git commit -m "Saved the evaluation project"
-  ```
+- `VACANT_JOBS`
+- `JOB_APPLICATIONS`
+- `JOBS_POSTING_ARCHIVE`
+- `NOTIFICATIONS`
 
-### Step 7: Push Your Branch to GitHub
-- Run the following commands to upload the changes to the forked github repository (Replace your-name with your name in your-name-submission-branch):
-  ```bash
-  git push origin your-name-submission-branch
-  ```
+## Main Flow
 
-### Step 8: Create a Pull Request
-- Go to your forked repository on GitHub.
-- You should see a prompt to create a pull request. Click on "Compare & pull request".
-- Provide a title and description for your pull request, then click "Create pull request".
-
-### Step 9: Notify Codeline
-- Notify on slack that you have created a PR for your solution.
-
-## Note: If you face any issues in the process above, Please do the following:
-- Watch [this youtube tutorial](https://www.youtube.com/watch?v=a_FLqX3vGR4)
-- Contact Ikhlas or Atyab.
+```text
+HR INSERT
+   ↓
+VACANT_JOBS
+   ↓
+Database automation
+   ↓
+NOTIFICATIONS
+   ↓
+Spring Boot Consumer
+   ↓
+Slack
+   ↓
+Notification marked SENT
