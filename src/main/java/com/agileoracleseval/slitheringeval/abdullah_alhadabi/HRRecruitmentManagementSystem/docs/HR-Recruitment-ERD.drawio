@@ -1,0 +1,62 @@
+<mxfile host="app.diagrams.net" modified="2026-09-02T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="hr-recruitment-erd" name="HR Recruitment ERD">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="HR Recruitment Management System - Entity Relationship Diagram" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="30" width="760" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="vacant_jobs" value="&lt;div style=&quot;background:#ef3b24;color:#ffffff;padding:10px;font-size:17px;font-weight:bold;&quot;&gt;VACANT_JOBS&lt;/div&gt;&lt;div style=&quot;padding:10px;line-height:1.65;&quot;&gt;&lt;b&gt;PK&lt;/b&gt; job_id : NUMBER (IDENTITY)&lt;br&gt;job_title : VARCHAR2(150) NOT NULL&lt;br&gt;description : VARCHAR2(2000) NOT NULL&lt;br&gt;expires_at : TIMESTAMP NOT NULL&lt;br&gt;active_flag : CHAR(1) DEFAULT 'Y'&lt;br&gt;created_at : TIMESTAMP DEFAULT SYSTIMESTAMP&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=0;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="130" width="390" height="260" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="job_applications" value="&lt;div style=&quot;background:#ef3b24;color:#ffffff;padding:10px;font-size:17px;font-weight:bold;&quot;&gt;JOB_APPLICATIONS&lt;/div&gt;&lt;div style=&quot;padding:10px;line-height:1.65;&quot;&gt;&lt;b&gt;PK&lt;/b&gt; application_id : NUMBER (IDENTITY)&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; job_id : NUMBER NOT NULL&lt;br&gt;applicant_name : VARCHAR2(150) NOT NULL&lt;br&gt;applicant_email : VARCHAR2(254) NOT NULL&lt;br&gt;applied_at : TIMESTAMP DEFAULT SYSTIMESTAMP&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=0;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="650" y="130" width="400" height="240" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="notifications" value="&lt;div style=&quot;background:#ef3b24;color:#ffffff;padding:10px;font-size:17px;font-weight:bold;&quot;&gt;NOTIFICATIONS&lt;/div&gt;&lt;div style=&quot;padding:10px;line-height:1.65;&quot;&gt;&lt;b&gt;PK&lt;/b&gt; notification_id : NUMBER (IDENTITY)&lt;br&gt;notification_type : VARCHAR2(30) NOT NULL&lt;br&gt;subject : VARCHAR2(200) NOT NULL&lt;br&gt;body : CLOB NOT NULL&lt;br&gt;status : VARCHAR2(10) DEFAULT 'PENDING'&lt;br&gt;dedup_key : VARCHAR2(200) UNIQUE&lt;br&gt;attempt_count : NUMBER DEFAULT 0&lt;br&gt;created_at : TIMESTAMP DEFAULT SYSTIMESTAMP&lt;br&gt;sent_at : TIMESTAMP NULL&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=0;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="130" width="390" height="300" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="jobs_archive" value="&lt;div style=&quot;background:#555555;color:#ffffff;padding:10px;font-size:17px;font-weight:bold;&quot;&gt;JOBS_POSTING_ARCHIVE&lt;/div&gt;&lt;div style=&quot;padding:10px;line-height:1.65;&quot;&gt;&lt;b&gt;PK&lt;/b&gt; job_id : NUMBER&lt;br&gt;job_title : VARCHAR2(150) NOT NULL&lt;br&gt;description : VARCHAR2(2000) NOT NULL&lt;br&gt;expires_at : TIMESTAMP NOT NULL&lt;br&gt;created_at : TIMESTAMP NOT NULL&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=0;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="100" y="570" width="390" height="230" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="applications_archive" value="&lt;div style=&quot;background:#555555;color:#ffffff;padding:10px;font-size:17px;font-weight:bold;&quot;&gt;JOB_APPLICATIONS_ARCHIVE&lt;/div&gt;&lt;div style=&quot;padding:10px;line-height:1.65;&quot;&gt;&lt;b&gt;PK&lt;/b&gt; application_id : NUMBER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; job_id : NUMBER NOT NULL&lt;br&gt;applicant_name : VARCHAR2(150) NOT NULL&lt;br&gt;applicant_email : VARCHAR2(254) NOT NULL&lt;br&gt;applied_at : TIMESTAMP NOT NULL&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=0;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="650" y="570" width="400" height="230" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rel_live_applications" value="1                         0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERmany;endFill=0;startArrow=ERone;startFill=0;strokeWidth=2;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="vacant_jobs" target="job_applications">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rel_job_archive" value="archived as" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;dashed=1;strokeWidth=2;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="vacant_jobs" target="jobs_archive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rel_archive_applications" value="1                         0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERmany;endFill=0;startArrow=ERone;startFill=0;strokeWidth=2;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="jobs_archive" target="applications_archive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rel_app_archive" value="moved before vacancy purge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;dashed=1;strokeWidth=2;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="job_applications" target="applications_archive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rel_notification" value="creates pending messages" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;dashed=1;strokeWidth=2;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="vacant_jobs" target="notifications">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note" value="Design decision: applications are copied to JOB_APPLICATIONS_ARCHIVE before their parent vacancy is purged. This preserves candidate history while allowing VACANT_JOBS to contain only the live board." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="580" width="420" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend" value="PK = Primary Key    FK = Foreign Key    Solid crow's-foot = database relationship    Dashed arrow = workflow/data movement" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=13;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="100" y="900" width="900" height="30" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,14 @@
+# Local environment files can contain passwords and webhook URLs.
+.env
+.env.*
+!.env.example
+
+# Generated build output and IDE project state.
+/target/
+/.idea/
+
+# IntelliJ user-specific state
+.idea/workspace.xml
+
+# Local IntelliJ run configurations may contain credentials or webhook URLs.
+/.run/
