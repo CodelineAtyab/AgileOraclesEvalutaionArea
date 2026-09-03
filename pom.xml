@@ -7,7 +7,18 @@
     <groupId>com.agileoracleseval</groupId>
     <artifactId>AgileOraclesEvalutaionArea</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <dependencies>
+        <dependency>
+            <groupId>com.agileoracleseval</groupId>
+            <artifactId>AgileOraclesEvalutaionArea</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20231013</version>
+    </dependency>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
