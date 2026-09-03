@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vacancy Board</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+<header>
+    <h1>Vacancy Board</h1>
+    <p class="subtitle">Open positions served live from Oracle via Spring Boot.</p>
+</header>
+
+<main>
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Available vacancies</h2>
+            <button id="refreshBtn" class="btn ghost">Refresh</button>
+        </div>
+        <div id="status" class="status"></div>
+        <div id="vacancies" class="cards"></div>
+    </section>
+
+    <section class="panel">
+        <h2>Create a vacancy (HR)</h2>
+        <form id="createForm" class="form">
+            <label>Title <input name="title" required maxlength="100"/></label>
+            <label>Department <input name="department" maxlength="50"/></label>
+            <label>Description <textarea name="description" required maxlength="1000" rows="3"></textarea></label>
+            <label>Expires at <input name="expiresAt" type="datetime-local" required/></label>
+            <button type="submit" class="btn">Create vacancy</button>
+            <span id="createMsg" class="msg"></span>
+        </form>
+    </section>
+</main>
+
+<!-- Apply dialog -->
+<dialog id="applyDialog">
+    <form id="applyForm" method="dialog" class="form">
+        <h3 id="applyTitle">Apply</h3>
+        <label>Your name <input name="applicantName" required maxlength="150"/></label>
+        <label>Your email <input name="applicantEmail" type="email" required maxlength="150"/></label>
+        <div class="row">
+            <button type="submit" class="btn">Submit application</button>
+            <button type="button" id="applyCancel" class="btn ghost">Cancel</button>
+        </div>
+        <span id="applyMsg" class="msg"></span>
+    </form>
+</dialog>
+
+<script src="/app.js"></script>
+</body>
+</html>

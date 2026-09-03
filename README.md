@@ -1,63 +1,70 @@
-﻿## Submission Instructions
+# VacancyApp (Spring Boot)
 
-To submit your JAVA Maven project as a solution, please follow these steps:
+The Spring Boot phase of a database-led vacancy board. **Oracle owns all business logic**
+(expiry, archive, purge, description normalization, digest generation, aggregation, scheduled
+PL/SQL jobs). This app is only an **API layer, database consumer, UI backend, and Slack producer** —
+it consumes Oracle stored procedures / `SYS_REFCURSOR` outputs and never re-implements PL/SQL logic.
 
-### Step 1: Install git on your PC
-- Install "git" as shown in this tutorial: [How to install git](https://youtu.be/iYkLrXobBbA?si=_l0haibv_X9NpIjJ)
-- Open command prompt and run
-  ```bash
-  git version
-  ```
-- If you see the version, then git is successfully installed.
+## What it does
 
-### Step 2: Fork the Repository
-- Navigate to [this repository](https://github.com/CodelineAtyab/AgileOraclesEvalutaionArea) provided by Codeline.
-- Click on the "Fork" button at the top-right corner of the page to create a copy of the repository under your own GitHub account.
+- `GET  /vacancies/available` — currently open, non-expired vacancies (via `GET_AVAILABLE_VACANCIES`).
+- `POST /vacancies` — HR creates a vacancy (insert into `vacant_jobs`).
+- `POST /vacancies/{jobId}/applications` — a candidate applies (insert into `job_applications`).
+- Browser vacancy board at `http://localhost:8080/`.
+- **Every 5 minutes** it calls `GET_AVAILABLE_VACANCIES`, `GET_PENDING_NOTIFICATIONS`,
+  and `GET_VACANCY_DASHBOARD` (three REF cursors). If pending notifications reach **7**, it sends
+  the digest to Slack immediately.
+- **Every 15 minutes** it sends two Slack messages: a vacancy dashboard and a notification digest
+  (up to 7 pending). On a successful digest it calls `MARK_NOTIFICATION_SENT` for each notification;
+  on failure it calls `MARK_NOTIFICATION_FAILED`.
 
-### Step 3: Clone the Forked Repository
-- Open your terminal or command prompt.
-- Clone the forked repository to your local machine using the following command:
-  ```bash
-  git clone https://github.com/your-username/repo-name.git
-  ```
+## Prerequisites
 
-### Step 4: Create a new branch
-- Navigate to the cloned repository directory
-  ```bash
-  cd repo-name
-  ```
-- Create a new branch for your code submissions (Replace your-name with your name in your-name-submission-branch):
-  ```bash
-  git checkout -b your-name-submission-branch
-  ```
+- JDK 17+, Maven, and the Oracle schema (`vacant_jobs`, `job_applications`, `notifications`,
+  plus the 14 procedures/functions) already deployed in `FREEPDB1`.
 
+## Configuration (secrets stay out of source)
 
-### Step 5: Add Your Code
-- Create a package by your full name at src/main/java/com/agileoracleseval/slitheringeval/your_full_name
-- Paste your Java Project Folder in src/main/java/com/agileoracleseval/slitheringeval/your_full_name/YourProjectFolderNameHere
-- For Example: src/main/java/com/agileoracleseval/slitheringeval/syed_atyab/ProjectSlithering
+1. Copy `sample.env` to `.env` in the project root and fill in real values:
+   ```
+   DB_URL=jdbc:oracle:thin:@localhost:1521/FREEPDB1
+   DB_USERNAME=vacancy_app
+   DB_PASSWORD=your-password
+   SLACK_WEBHOOK_URL=https://hooks.slack.com/services/XXX/YYY/ZZZ
+   SLACK_ENABLED=true
+   ```
+2. Add `.env` to your `.gitignore` so it is never committed.
+3. `.env` is loaded automatically at startup by `spring-dotenv`.
 
-### Step 6: Commit your changes
-- Run the following commands in order to commit your changes:
-  ```bash
-  git add *
-  git commit -m "Saved the evaluation project"
-  ```
+### Creating the Slack webhook (do once, manually)
 
-### Step 7: Push Your Branch to GitHub
-- Run the following commands to upload the changes to the forked github repository (Replace your-name with your name in your-name-submission-branch):
-  ```bash
-  git push origin your-name-submission-branch
-  ```
+1. Go to <https://api.slack.com/apps> → **Create New App** → *From scratch*.
+2. Enable **Incoming Webhooks**, click **Add New Webhook to Workspace**, pick a channel.
+3. Copy the generated webhook URL into `SLACK_WEBHOOK_URL` in `.env`.
 
-### Step 8: Create a Pull Request
-- Go to your forked repository on GitHub.
-- You should see a prompt to create a pull request. Click on "Compare & pull request".
-- Provide a title and description for your pull request, then click "Create pull request".
+To run without Slack (e.g. first local test), set `SLACK_ENABLED=false` — messages are logged instead.
 
-### Step 9: Notify Codeline
-- Notify on slack that you have created a PR for your solution.
+## Run
 
-## Note: If you face any issues in the process above, Please do the following:
-- Watch [this youtube tutorial](https://www.youtube.com/watch?v=a_FLqX3vGR4)
-- Contact Ikhlas or Atyab.
+```
+mvn clean package
+mvn spring-boot:run
+```
+
+Then open <http://localhost:8080/>.
+
+### Quick API checks
+
+```
+curl http://localhost:8080/vacancies/available
+
+curl -X POST http://localhost:8080/vacancies \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Java Developer","description":"Build APIs","department":"Engineering","expiresAt":"2026-12-31T17:00:00"}'
+
+curl -X POST http://localhost:8080/vacancies/1/applications \
+  -H "Content-Type: application/json" \
+  -d '{"applicantName":"Jane Doe","applicantEmail":"jane@example.com"}'
+```
+
+Error responses: `404` unknown job, `409` job not open/expired, `400` invalid input.
