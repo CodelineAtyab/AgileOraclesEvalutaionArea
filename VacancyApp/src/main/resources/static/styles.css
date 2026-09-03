@@ -1,0 +1,99 @@
+:root {
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --accent: #2f6feb;
+    --text: #1e2330;
+    --muted: #6b7280;
+    --border: #e2e6ee;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+header {
+    background: var(--accent);
+    color: #fff;
+    padding: 1.5rem 2rem;
+}
+
+header h1 { margin: 0; font-size: 1.6rem; }
+.subtitle { margin: .3rem 0 0; opacity: .9; }
+
+main {
+    max-width: 960px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h2 { margin: 0 0 .5rem; font-size: 1.2rem; }
+.status { color: var(--muted); margin-bottom: .75rem; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+
+.card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+.card h3 { margin: 0 0 .25rem; }
+.card .dept { color: var(--accent); font-size: .85rem; font-weight: 600; margin-bottom: .5rem; }
+.card .desc { color: var(--text); font-size: .9rem; flex: 1; }
+.card .meta { color: var(--muted); font-size: .8rem; margin: .5rem 0; }
+
+.form { display: grid; gap: .75rem; max-width: 480px; }
+.form label { display: grid; gap: .25rem; font-size: .9rem; }
+.form input, .form textarea {
+    padding: .5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font: inherit;
+}
+
+.btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: .55rem .9rem;
+    border-radius: 6px;
+    font: inherit;
+    cursor: pointer;
+    align-self: start;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+.row { display: flex; gap: .5rem; }
+.msg { font-size: .85rem; }
+.msg.ok { color: #15803d; }
+.msg.err { color: #b91c1c; }
+
+dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .2);
+}
+dialog::backdrop { background: rgba(0, 0, 0, .4); }
