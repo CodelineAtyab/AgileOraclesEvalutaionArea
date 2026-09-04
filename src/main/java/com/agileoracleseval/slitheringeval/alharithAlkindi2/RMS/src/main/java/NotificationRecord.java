@@ -1,4 +1,4 @@
-package HRRecruitmentManagementSystem.HRRecruitmentManagementSystem;
+package com.agileoracleseval.slitheringeval.alharithAlkindi2.RMS.src.main.java;
 
 import java.sql.Timestamp;
 
